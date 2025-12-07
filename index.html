@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>추억의 전쟁 게임</title>
     <style>
         * {
@@ -29,6 +29,41 @@
             pointer-events: none;
             z-index: -1;
         }
+        .count-control {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.count-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: #4CAF50;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+.count-btn:active {
+    background: #45a049;
+    transform: scale(0.95);
+}
+.count-input {
+    width: 40px;
+    text-align: center;
+    padding: 4px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 12px;
+}
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -297,6 +332,53 @@
             font-size: 11px;
         }
         .team-counts:hover .details { display: block; }
+        .unit-info-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #2196F3;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 11px;
+    cursor: help;
+    margin-left: 5px;
+    position: relative;
+}
+
+.unit-tooltip {
+    display: none;
+    position: absolute;
+    left: 20px;
+    top: 0;
+    background: rgba(0, 0, 0, 0.95);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #2196F3;
+    width: 250px;
+    z-index: 1000;
+    font-size: 11px;
+    line-height: 1.5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.unit-info-icon:hover .unit-tooltip {
+    display: block;
+}
+
+.unit-tooltip .stat-line {
+    margin: 3px 0;
+    color: #ffd700;
+}
+
+.unit-tooltip .ability-line {
+    margin: 5px 0;
+    color: #4CAF50;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 5px;
+}
 
         .btn-fast { background: linear-gradient(90deg,#f6b73c,#ff7a18); color: #111; }
         @keyframes health-bar-flash {
@@ -380,6 +462,144 @@
             0%, 100% { transform: scale(1) rotate(0deg); }
             50% { transform: scale(1.1) rotate(15deg); }
         }
+        .unit-info-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 10px auto;
+    display: block;
+    transition: transform 0.2s;
+}
+
+.unit-info-btn:hover {
+    transform: scale(1.05);
+}
+
+.unit-info-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+.unit-info-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.unit-info-content {
+    background: linear-gradient(180deg, #1a1a2e, #16213e);
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.unit-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+}
+
+.unit-info-header h2 {
+    color: #fff;
+    font-size: 24px;
+}
+
+.close-modal {
+    background: #ff4444;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.unit-card {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.unit-card:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: #4CAF50;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+}
+
+.unit-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.unit-card-icon {
+    font-size: 32px;
+}
+
+.unit-card-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.unit-card-stats {
+    font-size: 11px;
+    color: #ffd700;
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.unit-card-ability {
+    font-size: 12px;
+    color: #4CAF50;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 8px;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.unit-theme-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    margin-left: 5px;
+}
         .battle-log {
             background: rgba(0,0,0,0.5);
             border-radius: 10px;
@@ -499,13 +719,27 @@
         </div>
 
         <div class="battle-controls">
-            <button class="btn btn-primary" onclick="startBattle()">⚔️ 전투 시작</button>
-            <button class="btn btn-secondary" onclick="resetBattle()">🔄 초기화</button>
-            <button id="fastBtn" class="btn btn-fast" onclick="toggleFast()">⏩ 빠르게</button>
-            <button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
+           <div class="battle-controls">
+    <button class="btn btn-primary" onclick="startBattle()">⚔️ 전투 시작</button>
+    <button class="btn btn-secondary" onclick="resetBattle()">🔄 초기화</button>
+       <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px 20px;" onclick="openUnitInfo()">📖 유닛 정보</button>
+    <button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
+
+</div>
         </div>
 
+        <div class="unit-info-modal" id="unitInfoModal">
+    <div class="unit-info-content">
+        <div class="unit-info-header">
+            <h2>⚔️ 유닛 정보</h2>
+            <button class="close-modal" onclick="closeUnitInfo()">×</button>
+        </div>
+        <div class="unit-grid" id="unitGrid"></div>
+    </div>
+</div>
+
         <div class="battlefield" id="battlefield"></div>
+        
 
         <div class="battle-log" id="battleLog"></div>
     </div>
@@ -522,137 +756,333 @@
         let damageMultiplier = 1.0;
 
         // 중세 유닛 HTML 생성
-        const medievalUnitsHTML = `
-            <div class="unit-config">
-                <div class="unit-header"><strong>🗡️ 기사</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDKnightFrontCount" value="2" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDKnightBackCount" value="1" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDKnightSpecial" value="25" min="0" max="100"></div>
+  const medievalUnitsHTML = `
+    <div class="unit-config">
+        <div class="unit-header"><strong>🗡️ 기사</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDKnightFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDKnightFrontCount" value="2" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDKnightFrontCount', 1)">+</button>
                 </div>
             </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>🏹 궁수</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDArcherFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDArcherBackCount" value="2" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDArcherSpecial" value="20" min="0" max="100"></div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDKnightBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDKnightBackCount" value="1" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDKnightBackCount', 1)">+</button>
                 </div>
             </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>🐦 새잡이</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDSnowmanFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDSnowmanBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDSnowmanSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-   
-            <div class="unit-config">
-                <div class="unit-header"><strong>🛡️ 쉴더</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDShielderFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDShielderBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDShielderSpecial" value="0" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>⚕️ 힐러</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDHealerFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDHealerBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDHealerSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>🔨 해머맨</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDHammermanFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDHammermanBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDHammermanSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>💣 폭탄병</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDBombermanFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDBombermanBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDBombermanSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>🥷 닌자</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDNinjaFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDNinjaBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDNinjaSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>🛖 동굴</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDCaveFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDCaveBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>소환</label>
-                        <select id="TEAM_IDCaveSpawnType" style="padding: 4px; border-radius: 5px; border: none; font-size: 11px;">
-                            <option value="knight">🗡️ 기사</option>
-                            <option value="archer">🏹 궁수</option>
-                            <option value="snowman">🐦 새잡이</option>
-                            <option value="golem">🗿 골렘</option>
-                            <option value="shielder">🛡️ 쉴더</option>
-                            <option value="healer">⚕️ 힐러</option>
-                            <option value="bomberman">💣 폭탄병</option>
-                            <option value="hammerman">🔨 해머맨</option>
-                            <option value="ninja">🥷 닌자</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // 신화 유닛 HTML 생성
-        const mythologyUnitsHTML = `
-            <div class="unit-config">
-                <div class="unit-header"><strong>👹 오크</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDOrcFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDOrcBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDOrcSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>👼 천사</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDAngelFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDAngelBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDAngelSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-                <div class="unit-header"><strong>😈 사탄</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDSatanFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDSatanBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDSatanSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-                     <div class="unit-config">
-                <div class="unit-header"><strong>🗿 골렘</strong></div>
-                <div class="unit-controls">
-                    <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDGolemFrontCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDGolemBackCount" value="0" min="0" max="10"></div>
-                    <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDGolemSpecial" value="20" min="0" max="100"></div>
-                </div>
-            </div>
-            <div class="unit-config">
-    <div class="unit-header"><strong>🦄 유니콘</strong></div>
-    <div class="unit-controls">
-        <div class="control-group"><label>전방</label><input type="number" id="TEAM_IDUnicornFrontCount" value="0" min="0" max="10"></div>
-        <div class="control-group"><label>후방</label><input type="number" id="TEAM_IDUnicornBackCount" value="0" min="0" max="10"></div>
-        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDUnicornSpecial" value="20" min="0" max="100"></div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDKnightSpecial" value="25" min="0" max="100"></div>
+        </div>
     </div>
-</div>
-        `;
+    <div class="unit-config">
+        <div class="unit-header"><strong>🏹 궁수</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDArcherFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDArcherFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDArcherFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDArcherBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDArcherBackCount" value="2" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDArcherBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDArcherSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🐦 새잡이</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSnowmanFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDSnowmanFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSnowmanFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSnowmanBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDSnowmanBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSnowmanBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDSnowmanSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🛡️ 쉴더</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDShielderFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDShielderFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDShielderFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDShielderBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDShielderBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDShielderBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDShielderSpecial" value="0" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>⚕️ 힐러</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHealerFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDHealerFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHealerFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHealerBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDHealerBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHealerBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDHealerSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🔨 해머맨</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHammermanFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDHammermanFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHammermanFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHammermanBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDHammermanBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDHammermanBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDHammermanSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>💣 폭탄병</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDBombermanFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDBombermanFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDBombermanFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDBombermanBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDBombermanBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDBombermanBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDBombermanSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🥷 닌자</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDNinjaFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDNinjaFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDNinjaFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDNinjaBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDNinjaBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDNinjaBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDNinjaSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🛖 동굴</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDCaveFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDCaveFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDCaveFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDCaveBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDCaveBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDCaveBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>소환</label>
+                <select id="TEAM_IDCaveSpawnType" style="padding: 4px; border-radius: 5px; border: none; font-size: 11px;">
+                    <option value="knight">🗡️ 기사</option>
+                    <option value="archer">🏹 궁수</option>
+                    <option value="snowman">🐦 새잡이</option>
+                    <option value="golem">🗿 골렘</option>
+                    <option value="shielder">🛡️ 쉴더</option>
+                    <option value="healer">⚕️ 힐러</option>
+                    <option value="bomberman">💣 폭탄병</option>
+                    <option value="hammerman">🔨 해머맨</option>
+                    <option value="ninja">🥷 닌자</option>
+                </select>
+            </div>
+        </div>
+    </div>
+`;
+
+      const mythologyUnitsHTML = `
+    <div class="unit-config">
+        <div class="unit-header"><strong>👹 오크</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDOrcFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDOrcFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDOrcFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDOrcBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDOrcBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDOrcBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDOrcSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>👼 천사</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDAngelFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDAngelFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDAngelFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDAngelBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDAngelBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDAngelBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDAngelSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>😈 사탄</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSatanFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDSatanFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSatanFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSatanBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDSatanBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDSatanBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDSatanSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🗿 골렘</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDGolemFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDGolemFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDGolemFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDGolemBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDGolemBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDGolemBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDGolemSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🦄 유니콘</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDUnicornFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDUnicornFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDUnicornFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDUnicornBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDUnicornBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDUnicornBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDUnicornSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+`;
+
+
 
         // 초기화
         document.getElementById('team1MedievalUnits').innerHTML = medievalUnitsHTML.replace(/TEAM_ID/g, 'team1');
@@ -713,6 +1143,18 @@
             document.getElementById(inputId).value = name;
         }
 
+        function changeCount(inputId, delta) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    const currentValue = parseInt(input.value) || 0;
+    const min = parseInt(input.min) || 0;
+    const max = parseInt(input.max) || 999;
+    
+    const newValue = Math.max(min, Math.min(max, currentValue + delta));
+    input.value = newValue;
+}
+
         function increaseDamage() {
             if (!battleActive) {
                 alert('전투 중에만 사용할 수 있습니다.');
@@ -731,8 +1173,149 @@
             
             addLog(`💪 전체 병사의 공격력이 ${percent}% 증가했습니다! (총 ${Math.round(damageMultiplier * 100)}% 적용)`, true);
         }
+        const unitDescriptions = {
+    knight: {
+        icon: '🗡️',
+        name: '기사',
+        theme: '중세',
+        stats: 'HP: 130 | 공격: 20 | 속도: 2\n공격속도: 3초 | 사거리: 80',
+        ability: '근접 전투의 기본 유닛. 빠른 이동속도로 적에게 돌진합니다.'
+    },
+    archer: {
+        icon: '🏹',
+        name: '궁수',
+        theme: '중세',
+        stats: 'HP: 80 | 공격: 25 | 속도: 1.7\n공격속도: 4.6초 | 사거리: 400',
+        ability: '원거리 공격 유닛. 멀리서 안전하게 적을 공격합니다.'
+    },
+    snowman: {
+        icon: '🐦',
+        name: '새잡이',
+        theme: '중세',
+        stats: 'HP: 50 | 공격: 10 | 속도: 1\n공격속도: 2초 | 사거리: 650',
+        ability: '초장거리 저격 유닛. 매우 먼 거리에서 공격하지만 약합니다.'
+    },
+    shielder: {
+        icon: '🛡️',
+        name: '쉴더',
+        theme: '중세',
+        stats: 'HP: 175 | 공격: 15 | 속도: 0.8\n공격속도: 3초 | 사거리: 60',
+        ability: '6초마다 2초간 무적 상태가 됩니다. 높은 체력의 탱커 유닛.'
+    },
+    healer: {
+        icon: '⚕️',
+        name: '힐러',
+        theme: '중세',
+        stats: 'HP: 120 | 공격: 5 | 속도: 1\n회복 주기: 4초  \n사거리: 150',
+        ability: '4초마다 아군 전체를 최대 HP의 20% 회복합니다. (신화 유닛은 2%만 회복)'
+    },
+    hammerman: {
+        icon: '🔨',
+        name: '해머맨',
+        theme: '중세',
+        stats: 'HP: 200 | 공격: 10 | 속도: 1.5\n공격속도: 2.2초 | 사거리: 80',
+        ability: '공격 시 주변 적에게 50% 스플래시 데미지를 주고, 적을 120px 넉백시킵니다.'
+    },
+    bomberman: {
+        icon: '💣',
+        name: '폭탄병',
+        theme: '중세',
+        stats: 'HP: 100 | 공격: 30 | 속도: 2.2\n공격속도: 4초 | 사거리: 100',
+        ability: '폭탄을 설치하여 3초 후 폭발. 주변 340 범위에 스플래시. 자신도 25 데미지를 받습니다.'
+    },
+    ninja: {
+        icon: '🥷',
+        name: '닌자',
+        theme: '중세',
+        stats: 'HP: 110 | 공격: 5→20 | 속도: 3\n공격속도: 0.8초→4.2초 | 사거리: 120→450',
+        ability: '사망 시 1회 후퇴하여 원거리 모드로 전환. HP 70 회복, 사거리와 공격력 증가.'
+    },
+    cave: {
+        icon: '🛖',
+        name: '동굴',
+        theme: '중세',
+        stats: 'HP: 255 | 공격: 5 | 속도: 0.1\n공격속도: 11초 | 사거리: 660',
+        ability: '6초 후 첫 소환, 이후 12초마다 선택한 유닛 소환 (HP 50 소모). 천천히 움직입니다. (단, 동굴은 체력 회복 불가.)'
+    },
+    orc: {
+        icon: '👹',
+        name: '오크',
+        theme: '신화',
+        stats: 'HP: 110 | 공격: 20 | 속도: 2.5\n공격속도: 2.5초 | 사거리: 120',
+        ability: '빠른 공격속도의 근접 전투 유닛. 기사보다 빠릅니다.'
+    },
+    angel: {
+        icon: '👼',
+        name: '천사',
+        theme: '신화',
+        stats: 'HP: 100 | 공격: 5 | 속도: 1\n부활 가능 횟수: 5회',
+        ability: '죽은 아군을 부활시킵니다 (부활 유닛의 체력은 50% 회복). 신화 유닛 1회, 중세 유닛 2회 소모. 부활 했을때 주변 적 밀어냅니다. (단, 남은 횟수가 1이면 중세 유닛 부활 불가.)'
+    },
+    satan: {
+        icon: '😈',
+        name: '사탄',
+        theme: '신화',
+        stats: 'HP: 250 | 공격: 10 | 속도: 1.5\n공격속도: 8초 | 사거리: 800',
+        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 밀치기+10 데미지. 해제 시 추가 40 데미지.'
+    },
+    golem: {
+        icon: '🗿',
+        name: '골렘',
+        theme: '신화',
+        stats: 'HP: 330 | 공격: 80 | 속도: 0.3\n공격속도: 10초 | 사거리: 60',
+        ability: '느리지만 매우 강력한 공격. 주변 80 범위의 적에게 50% 스플래시 데미지.'
+    },
+    unicorn: {
+        icon: '🦄',
+        name: '유니콘',
+        theme: '신화',
+        stats: 'HP: 200 | 공격: 10~130 | 속도: 0.6\n공격속도: 3초 | 사거리: 100',
+        ability: '2.5초마다 차지 +1 (최대 6). 차지당 공격력 +20. 2차지 이상에서 공격 시 150px 후퇴하고 차지 초기화.'
+    }
+};
+
+function openUnitInfo() {
+    const modal = document.getElementById('unitInfoModal');
+    const grid = document.getElementById('unitGrid');
+    
+    grid.innerHTML = '';
+    
+    Object.keys(unitDescriptions).forEach(key => {
+        const unit = unitDescriptions[key];
+        const card = document.createElement('div');
+        card.className = 'unit-card';
+        card.innerHTML = `
+            <div class="unit-card-header">
+                <div class="unit-card-icon">${unit.icon}</div>
+                <div>
+                    <div class="unit-card-name">${unit.name}</div>
+                    <span class="unit-theme-badge">${unit.theme}</span>
+                </div>
+            </div>
+            <div class="unit-card-stats">${unit.stats.replace(/\n/g, '<br>')}</div>
+            <div class="unit-card-ability">${unit.ability}</div>
+        `;
+        grid.appendChild(card);
+    });
+    
+    modal.classList.add('active');
+}
+
+function closeUnitInfo() {
+    document.getElementById('unitInfoModal').classList.remove('active');
+}
+
+// 모달 바깥 클릭 시 닫기
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('unitInfoModal');
+    if (e.target === modal) {
+        closeUnitInfo();
+    }
+});
 
         function randomizeTeamConfig(teamId) {
+
+             const totalCount = parseInt(document.getElementById(`team${teamId}TotalCount`).value) || 0;
 // 변경 후:
 let unitTypes = ['Knight', 'Archer', 'Snowman', 'Golem', 'Shielder', 'Healer', 'Bomberman', 'Hammerman', 'Ninja', 'Cave'];
 
@@ -844,14 +1427,14 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     this.range = 650;
                     this.theme = 'medieval';
                 } else if (type === 'healer') {
-                    this.maxHp = 100;
+                    this.maxHp = 120;
                     this.hp = this.maxHp;
                     this.baseDamage = 5;
                     this.damage = 5;
                     this.baseAttackSpeed = 8000;
                     this.attackSpeed = 8000;
                     this.speed = 1;
-                    this.range = 200;
+                    this.range = 250;
                     this.healInterval = 4000;
                     this.theme = 'medieval';
                 } else if (type === 'orc') {
@@ -948,30 +1531,30 @@ if (themeSelect && themeSelect.value === 'mythology') {
                 } else if (type === 'satan') {
                     this.maxHp = 250;
                     this.hp = this.maxHp;
-                    this.baseDamage = 0;
-                    this.damage = 0;
+                    this.baseDamage = 10;
+                    this.damage = 10;
                     this.baseAttackSpeed = 8000;
                     this.attackSpeed = 8000;
                     this.speed = 1.5;
                     this.range = 800;
                     this.theme = 'mythology';
                     this.possessionDuration = 4000;
-                 } else if (type === 'unicorn') {
-    this.maxHp = 200;
+         } else if (type === 'unicorn') {
+    this.maxHp = 170;
     this.hp = this.maxHp;
     this.baseDamage = 10;
     this.damage = 10;
     this.baseAttackSpeed = 3000;
     this.attackSpeed = 3000;
-    this.speed = 0.6;
-    this.range = 100;
+    this.speed = 0.5;
+    this.range = 80;
     this.theme = 'mythology';
     this.chargeLevel = 0;
-    this.isCharging = false;
-    this.hasRetreated = false;
-                    
+    this.maxChargeLevel = 6;
+    this.chargeInterval = 2500;
+    this.nextChargeTime = 0;
                 } else {
-                    this.maxHp = 310;
+                    this.maxHp = 330;
                     this.hp = this.maxHp;
                     this.baseDamage = 80;
                     this.damage = 80;
@@ -1043,28 +1626,27 @@ if (themeSelect && themeSelect.value === 'mythology') {
                 const geniusBadge = '';
                 const starDisplay = '';
                 
-                let extraInfo = '';
-                if (this.type === 'angel') {
-                    extraInfo = `<div style="color: gold; font-size: 11px; font-weight: bold;">부활: ${this.reviveCount}</div>`;
-                } else if (this.type === 'unicorn') {
-    extraInfo = `<div class="charge-level" style="color: #ff69b4; font-size: 11px; font-weight: bold;">차지: 0/6 (10 dmg)</div>`;
-}
-                
-                div.innerHTML = `
-                    <div class="soldier-avatar">${icon}</div>
-                    <div class="soldier-info ${this.type}">
-                        <div class="health-bar">
-                            <div class="health-fill" style="width: 100%"></div>
-                        </div>
-                        <div class="soldier-details">
-                            <div class="soldier-hp">HP: <span class="hp-text">${Math.floor(this.hp)}</span>/${this.maxHp}</div>
-                            <div>${starDisplay} ${starDisplay ? '| ' : ''}${typeLabel}</div>
-                            <div>공격력: ${Math.floor(this.damage)}</div>
-                            ${geniusBadge}
-                            ${extraInfo}
-                        </div>
-                    </div>
-                `;
+let extraInfo = '';
+if (this.type === 'angel') {
+    extraInfo = `<div class="revive-counter" style="color: gold; font-size: 11px; font-weight: bold; margin-top: 2px;">부활: ${this.reviveCount}</div>`;
+} else if (this.type === 'unicorn') {
+    extraInfo = `<div class="charge-level" style="color: #ff69b4; font-size: 11px; font-weight: bold; margin-top: 2px;">차지: 0 (10)</div>`;
+}              
+              div.innerHTML = `
+    <div class="soldier-avatar">${icon}</div>
+    <div class="soldier-info ${this.type}">
+        <div class="health-bar">
+            <div class="health-fill" style="width: 100%"></div>
+        </div>
+        ${extraInfo}
+        <div class="soldier-details">
+            <div class="soldier-hp">HP: <span class="hp-text">${Math.floor(this.hp)}</span>/${this.maxHp}</div>
+            <div>${starDisplay} ${starDisplay ? '| ' : ''}${typeLabel}</div>
+            <div>공격력: ${Math.floor(this.damage)}</div>
+            ${geniusBadge}
+        </div>
+    </div>
+`;
                 const healthFill = div.querySelector('.health-fill');
                 if (healthFill) {
                     if (this.type === 'knight') {
@@ -1238,33 +1820,9 @@ attack(target) {
                     return;
                 }
 
-                // 유니콘 차지 시스템
-// 이 부분 전체 삭제
-if (this.type === 'unicorn') {
-    if (now >= this.nextChargeTime && this.chargeLevel < this.maxChargeLevel) {
-        this.chargeLevel++;
-        this.damage = this.baseDamage + (this.chargeLevel * 10);
-        this.nextChargeTime = now + this.chargeInterval;
-        this.updateChargeDisplay();
-        addLog(`${this.team} 유니콘의 차지 레벨 증가! (${this.chargeLevel}/6, 공격력: ${this.damage})`, true);
-    }
-}
 
-// 일반 공격 로직 (거리 체크 부분 다음)
-if (this.type === 'unicorn' && this.chargeLevel >= 2) {
-    // 2차지 이상일 때 후퇴
-    const team1Side = document.getElementById('team1-side');
-    const team2Side = document.getElementById('team2-side');
-    const sideEl = this.team === units.team1[0].team ? team1Side : team2Side;
-    
-    if (this.team === units.team1[0].team) {
-        this.x = Math.max(0, this.x - 150);
-    } else {
-        this.x = Math.min(sideEl.offsetWidth - 40, this.x + 150);
-    }
-    this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
-    addLog(`${this.team} 유니콘이 후퇴했습니다!`, false);
-}
+
+
 
                 if (this.type === 'shielder') {
                     if (!this.isInvincible && now >= (this.nextShieldTime || 0)) {
@@ -1341,7 +1899,7 @@ if (this.type === 'unicorn' && this.chargeLevel >= 2) {
                             }
                             
                             deadUnit.alive = true;
-                            deadUnit.hp = Math.floor(deadUnit.maxHp * 0.7);
+                            deadUnit.hp = Math.floor(deadUnit.maxHp * 0.5);
                             deadUnit.x = death.x;
                             deadUnit.y = death.y;
                             
@@ -1461,8 +2019,41 @@ if (this.type === 'unicorn' && this.chargeLevel >= 2) {
                     const dx = targetAbsX - unitAbsX;
                     const dy = targetAbsY - unitAbsY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
+if (distance > this.range) return;
 
-                    if (distance > this.range) return;
+// 유니콘 공격 로직 (사거리 안에 있을 때만)
+if (this.type === 'unicorn') {
+    if (this.chargeLevel >= 2) {
+        // 2단계 이상일 때만 공격
+        let unicornDamage = this.damage * damageMultiplier;
+        target.takeDamage(unicornDamage);
+        addLog(`${this.team} 유니콘이 차지 공격! (${Math.floor(unicornDamage)} 데미지)`, true);
+        
+        // 공격 후 후퇴
+        const team1Side = document.getElementById('team1-side');
+        const team2Side = document.getElementById('team2-side');
+        const sideEl = this.team === units.team1[0].team ? team1Side : team2Side;
+        
+        if (this.team === units.team1[0].team) {
+            this.x = Math.max(0, this.x - 200);
+        } else {
+            this.x = Math.min(sideEl.offsetWidth - 40, this.x + 200);
+        }
+        this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+        
+        // 차지 초기화
+        this.chargeLevel = 0;
+        this.damage = this.baseDamage;
+        this.updateChargeDisplay();
+        addLog(`${this.team} 유니콘이 후퇴! 차지 리셋`, true);
+        
+        this.nextAttackTime = now + this.attackSpeed;
+        return;
+    } else {
+        // 1단계 이하는 공격 안함
+        return;
+    }
+}                    
                 }
 
                let damage = this.damage * damageMultiplier;
@@ -1746,27 +2337,20 @@ enemies.forEach(u => {
                 setTimeout(() => indicator.remove(), 600);
             }
             
-            updateReviveCounter() {
-                if (this.type === 'angel') {
-                    const details = this.element.querySelector('.soldier-details');
-                    if (details) {
-                        let counterDiv = details.querySelector('.revive-counter');
-                        if (!counterDiv) {
-                            counterDiv = document.createElement('div');
-                            counterDiv.className = 'revive-counter';
-                            counterDiv.style.cssText = 'color: gold; font-size: 11px; font-weight: bold;';
-                            details.appendChild(counterDiv);
-                        }
-                        counterDiv.textContent = `부활: ${this.reviveCount}`;
-                    }
-                }
-            }
+      updateReviveCounter() {
+    if (this.type === 'angel') {
+        const counterDiv = this.element.querySelector('.revive-counter');
+        if (counterDiv) {
+            counterDiv.textContent = `부활: ${this.reviveCount}`;
+        }
+    }
+}
         
-        updateChargeDisplay() {
+updateChargeDisplay() {
     if (this.type === 'unicorn') {
         const chargeDiv = this.element.querySelector('.charge-level');
         if (chargeDiv) {
-            chargeDiv.textContent = `차지: ${this.chargeLevel}/6 (${this.damage} dmg)`;
+            chargeDiv.textContent = `차지: ${this.chargeLevel} (${this.damage})`;
         }
     }
 }
@@ -2024,6 +2608,22 @@ u.updateDisplay();
                     u.flashHealthBar();
                     u.shieldEndTime = 0;
                 }
+// 유니콘 차지 시스템
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'unicorn' && u.alive) {
+        if (u.nextChargeTime === 0) {
+            u.nextChargeTime = now + u.chargeInterval;
+        }
+        if (now >= u.nextChargeTime && u.chargeLevel < u.maxChargeLevel) {
+            u.chargeLevel++;
+            u.damage = u.baseDamage + (u.chargeLevel * 20);
+            u.nextChargeTime = now + u.chargeInterval;
+            u.updateChargeDisplay();
+            addLog(`${u.team} 유니콘 차지 ${u.chargeLevel}/6 (공격력: ${u.damage})`, true);
+        }
+    }
+
+    });
                 
                 [units.team1, units.team2].flat().forEach(u => {
                     if (!u) return;
