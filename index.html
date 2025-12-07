@@ -754,6 +754,7 @@
         const intervalDelayBase = 20;
         const battlefield = document.getElementById('battlefield');
         let damageMultiplier = 1.0;
+        let angelCount = { team1: 0, team2: 0 };
 
         // 중세 유닛 HTML 생성
   const medievalUnitsHTML = `
@@ -846,7 +847,7 @@
         </div>
     </div>
     <div class="unit-config">
-        <div class="unit-header"><strong>⚕️ 힐러</strong></div>
+        <div class="unit-header"><strong>💊 힐러</strong></div>
         <div class="unit-controls">
             <div class="control-group">
                 <label>전방</label>
@@ -959,7 +960,7 @@
                     <option value="snowman">🐦 새잡이</option>
                     <option value="golem">🗿 골렘</option>
                     <option value="shielder">🛡️ 쉴더</option>
-                    <option value="healer">⚕️ 힐러</option>
+                    <option value="healer">💊 힐러</option>
                     <option value="bomberman">💣 폭탄병</option>
                     <option value="hammerman">🔨 해머맨</option>
                     <option value="ninja">🥷 닌자</option>
@@ -1203,10 +1204,10 @@
         ability: '6초마다 2초간 무적 상태가 됩니다. 높은 체력의 탱커 유닛.'
     },
     healer: {
-        icon: '⚕️',
+        icon: '💊',
         name: '힐러',
         theme: '중세',
-        stats: 'HP: 120 | 공격: 5 | 속도: 1\n회복 주기: 4초  \n사거리: 150',
+        stats: 'HP: 120 | 공격: X | 속도: 1\n회복 주기: 4초  \n사거리: 150',
         ability: '4초마다 아군 전체를 최대 HP의 20% 회복합니다. (신화 유닛은 2%만 회복)'
     },
     hammerman: {
@@ -1248,8 +1249,8 @@
         icon: '👼',
         name: '천사',
         theme: '신화',
-        stats: 'HP: 100 | 공격: 5 | 속도: 1\n부활 가능 횟수: 5회',
-        ability: '죽은 아군을 부활시킵니다 (부활 유닛의 체력은 50% 회복). 신화 유닛 1회, 중세 유닛 2회 소모. 부활 했을때 주변 적 밀어냅니다. (단, 남은 횟수가 1이면 중세 유닛 부활 불가.)'
+        stats: 'HP: 175 | 공격: X | 속도: 1\n부활 가능 횟수: 4회',
+        ability: '죽은 아군을 부활시킵니다 (부활 유닛의 체력은 50% 회복). 신화 유닛 1회, 중세 유닛 2회 소모. 부활 했을때 주변 적 밀어냅니다. (단, 남은 횟수가 1이면 중세 유닛 부활 불가.) (단, 천사가 두명 이상일 경우 부활 횟수는 첫번째 천사만 능력을 보유합니다.)'
     },
     satan: {
         icon: '😈',
@@ -1515,26 +1516,29 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     this.hasRetreated = false;
                     this.theme = 'medieval';
                 } else if (type === 'angel') {
-                    this.maxHp = 100;
+                    this.maxHp = 175;
                     this.hp = this.maxHp;
-                    this.baseDamage = 5;
-                    this.damage = 5;
+                    this.baseDamage = 10;
+                    this.damage = 10;
                     this.baseAttackSpeed = 11000;
                     this.attackSpeed = 11000;
                     this.speed = 1;
                     this.range = 450;
                     this.theme = 'mythology';
-                    this.reviveCount = 5;
+                    this.reviveCount = 4;
                     this.reviveCheckInterval = 500;
                     this.nextReviveCheckTime = 0;
                     this.recentDeaths = [];
+                        const teamKey = team === units.team1[0]?.team ? 'team1' : 'team2';
+    angelCount[teamKey]++;
+    this.canRevive = angelCount[teamKey] <= 1;
                 } else if (type === 'satan') {
                     this.maxHp = 250;
                     this.hp = this.maxHp;
                     this.baseDamage = 10;
                     this.damage = 10;
-                    this.baseAttackSpeed = 8000;
-                    this.attackSpeed = 8000;
+                    this.baseAttackSpeed = 5000;
+                    this.attackSpeed = 5000;
                     this.speed = 1.5;
                     this.range = 800;
                     this.theme = 'mythology';
@@ -1574,6 +1578,8 @@ if (themeSelect && themeSelect.value === 'mythology') {
                 this.shieldEndTime = this.shieldEndTime || 0;
             }
 
+            
+
             createElement() {
                 const div = document.createElement('div');
                 div.className = `soldier ${this.type}`;
@@ -1590,7 +1596,7 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     icon = '🐦';
                     typeLabel = '새잡이';
                 } else if (this.type === 'healer') {
-                    icon = '⚕️';
+                    icon = '💊';
                     typeLabel = '힐러';
                 } else if (this.type === 'shielder') {
                     icon = '🛡️';
@@ -1628,10 +1634,14 @@ if (themeSelect && themeSelect.value === 'mythology') {
                 
 let extraInfo = '';
 if (this.type === 'angel') {
-    extraInfo = `<div class="revive-counter" style="color: gold; font-size: 11px; font-weight: bold; margin-top: 2px;">부활: ${this.reviveCount}</div>`;
+    if (this.canRevive) {
+        extraInfo = `<div class="revive-counter" style="color: gold; font-size: 11px; font-weight: bold; margin-top: 2px;">부활: ${this.reviveCount}</div>`;
+    } else {
+        extraInfo = `<div class="revive-counter" style="color: #888; font-size: 11px; font-weight: bold; margin-top: 2px;">부활 불가</div>`;
+    }
 } else if (this.type === 'unicorn') {
     extraInfo = `<div class="charge-level" style="color: #ff69b4; font-size: 11px; font-weight: bold; margin-top: 2px;">차지: 0 (10)</div>`;
-}              
+}             
               div.innerHTML = `
     <div class="soldier-avatar">${icon}</div>
     <div class="soldier-info ${this.type}">
@@ -1875,90 +1885,104 @@ attack(target) {
                     return;
                 }
 
-                if (this.type === 'angel') {
-                    if (now < this.nextReviveCheckTime) return;
-                    
-                    if (this.recentDeaths && this.recentDeaths.length > 0 && this.reviveCount > 0) {
-                        const death = this.recentDeaths.shift();
-                        const deadUnit = death.unit;
-                        
-                        if (deadUnit.type === 'angel' || deadUnit.type === 'cave') {
-                            return;
-                        }
-                        
-                        const costToRevive = (deadUnit.theme === 'mythology') ? 1 : 2;
-                        
-                        if (costToRevive === 2 && this.reviveCount === 1) {
-                            return;
-                        }
-                        
-                        if (this.reviveCount >= costToRevive) {
-                            if (deadUnit.deathTimeout) {
-                                clearTimeout(deadUnit.deathTimeout);
-                                deadUnit.deathTimeout = null;
-                            }
-                            
-                            deadUnit.alive = true;
-                            deadUnit.hp = Math.floor(deadUnit.maxHp * 0.5);
-                            deadUnit.x = death.x;
-                            deadUnit.y = death.y;
-                            
-                            deadUnit.element.classList.remove('dead');
-                            deadUnit.element.style.opacity = '1';
-                            deadUnit.element.style.transform = `translate(${deadUnit.x}px, ${deadUnit.y}px)`;
-                            
-                            const sideId = this.team === units.team1[0].team ? 'team1-side' : 'team2-side';
-                            const side = document.getElementById(sideId);
-                            if (side && !deadUnit.element.parentNode) {
-                                side.appendChild(deadUnit.element);
-                            }
-                            
-                            deadUnit.updateDisplay();
-                            
-                            const team1Side = document.getElementById('team1-side');
-                            const team2Side = document.getElementById('team2-side');
-                            const enemies = this.team === units.team1[0].team ? units.team2 : units.team1;
-                            
-                            if (team1Side && team2Side) {
-                                const team1Rect = team1Side.getBoundingClientRect();
-                                const team2Rect = team2Side.getBoundingClientRect();
-                                const allyRect = this.team === units.team1[0].team ? team1Rect : team2Rect;
-                                const enemyRect = this.team === units.team1[0].team ? team2Rect : team1Rect;
-                                const enemySide = this.team === units.team1[0].team ? team2Side : team1Side;
-                                
-                                const revivedAbsX = allyRect.left + deadUnit.x;
-                                const revivedAbsY = allyRect.top + deadUnit.y;
-                                
-                                enemies.forEach(enemy => {
-                                    if (enemy.alive) {
-                                        const enemyAbsX = enemyRect.left + enemy.x;
-                                        const enemyAbsY = enemyRect.top + enemy.y;
-                                        const distToEnemy = Math.sqrt((enemyAbsX - revivedAbsX) ** 2 + (enemyAbsY - revivedAbsY) ** 2);
-                                        
-                                        if (distToEnemy <= 150) {
-                                            const pushAmount = 200;
-                                            if (this.team === units.team1[0].team) {
-                                                enemy.x = Math.min(enemy.x + pushAmount, enemySide.offsetWidth - 40);
-                                            } else {
-                                                enemy.x = Math.max(enemy.x - pushAmount, 40);
-                                            }
-                                            enemy.element.style.transform = `translate(${enemy.x}px, ${enemy.y}px)`;
-                                        }
-                                    }
-                                });
-                            }
-                            
-                            this.reviveCount -= costToRevive;
-                            this.updateReviveCounter();
-                            
-                            const unitLabel = deadUnit.type === 'knight' ? '기사' : deadUnit.type === 'archer' ? '궁수' : deadUnit.type === 'snowman' ? '새잡이' : deadUnit.type === 'golem' ? '골렘' : deadUnit.type === 'healer' ? '힐러' : deadUnit.type === 'shielder' ? '쉴더' : deadUnit.type === 'hammerman' ? '해머맨' : deadUnit.type === 'ninja' ? '닌자' : deadUnit.type === 'orc' ? '오크' : deadUnit.type === 'bomberman' ? '폭탄병' : '';
-                            addLog(`${this.team} 천사가 ${unitLabel}을(를) 부활시켰습니다! (남은 횟수: ${this.reviveCount})`, true);
-                        }
-                    }
-                    
-                    this.nextReviveCheckTime = now + this.reviveCheckInterval;
-                    return;
+            if (this.type === 'angel') {
+    if (now < this.nextReviveCheckTime) {
+        // 부활 능력이 없는 천사는 일반 공격으로 넘어감
+        if (!this.canRevive) {
+            // 아래 일반 공격 로직으로 계속 진행
+        } else {
+            return;
+        }
+    } else {
+        // 부활 능력이 있는 천사만 부활 시도
+        if (this.canRevive && this.recentDeaths && this.recentDeaths.length > 0 && this.reviveCount > 0) {
+            const death = this.recentDeaths.shift();
+            const deadUnit = death.unit;
+            
+            if (deadUnit.type === 'angel' || deadUnit.type === 'cave') {
+                this.nextReviveCheckTime = now + this.reviveCheckInterval;
+                return;
+            }
+            
+            const costToRevive = (deadUnit.theme === 'mythology') ? 1 : 2;
+            
+            if (costToRevive === 2 && this.reviveCount === 1) {
+                this.nextReviveCheckTime = now + this.reviveCheckInterval;
+                return;
+            }
+            
+            if (this.reviveCount >= costToRevive) {
+                if (deadUnit.deathTimeout) {
+                    clearTimeout(deadUnit.deathTimeout);
+                    deadUnit.deathTimeout = null;
                 }
+                
+                deadUnit.alive = true;
+                deadUnit.hp = Math.floor(deadUnit.maxHp * 0.5);
+                deadUnit.x = death.x;
+                deadUnit.y = death.y;
+                
+                deadUnit.element.classList.remove('dead');
+                deadUnit.element.style.opacity = '1';
+                deadUnit.element.style.transform = `translate(${deadUnit.x}px, ${deadUnit.y}px)`;
+                
+                const sideId = this.team === units.team1[0].team ? 'team1-side' : 'team2-side';
+                const side = document.getElementById(sideId);
+                if (side && !deadUnit.element.parentNode) {
+                    side.appendChild(deadUnit.element);
+                }
+                
+                deadUnit.updateDisplay();
+                
+                const team1Side = document.getElementById('team1-side');
+                const team2Side = document.getElementById('team2-side');
+                const enemies = this.team === units.team1[0].team ? units.team2 : units.team1;
+                
+                if (team1Side && team2Side) {
+                    const team1Rect = team1Side.getBoundingClientRect();
+                    const team2Rect = team2Side.getBoundingClientRect();
+                    const allyRect = this.team === units.team1[0].team ? team1Rect : team2Rect;
+                    const enemyRect = this.team === units.team1[0].team ? team2Rect : team1Rect;
+                    const enemySide = this.team === units.team1[0].team ? team2Side : team1Side;
+                    
+                    const revivedAbsX = allyRect.left + deadUnit.x;
+                    const revivedAbsY = allyRect.top + deadUnit.y;
+                    
+                    enemies.forEach(enemy => {
+                        if (enemy.alive) {
+                            const enemyAbsX = enemyRect.left + enemy.x;
+                            const enemyAbsY = enemyRect.top + enemy.y;
+                            const distToEnemy = Math.sqrt((enemyAbsX - revivedAbsX) ** 2 + (enemyAbsY - revivedAbsY) ** 2);
+                            
+                            if (distToEnemy <= 150) {
+                                const pushAmount = 200;
+                                if (this.team === units.team1[0].team) {
+                                    enemy.x = Math.min(enemy.x + pushAmount, enemySide.offsetWidth - 40);
+                                } else {
+                                    enemy.x = Math.max(enemy.x - pushAmount, 40);
+                                }
+                                enemy.element.style.transform = `translate(${enemy.x}px, ${enemy.y}px)`;
+                            }
+                        }
+                    });
+                }
+                
+                this.reviveCount -= costToRevive;
+                this.updateReviveCounter();
+                
+                const unitLabel = deadUnit.type === 'knight' ? '기사' : deadUnit.type === 'archer' ? '궁수' : deadUnit.type === 'snowman' ? '새잡이' : deadUnit.type === 'golem' ? '골렘' : deadUnit.type === 'healer' ? '힐러' : deadUnit.type === 'shielder' ? '쉴더' : deadUnit.type === 'hammerman' ? '해머맨' : deadUnit.type === 'ninja' ? '닌자' : deadUnit.type === 'orc' ? '오크' : deadUnit.type === 'bomberman' ? '폭탄병' : '';
+                addLog(`${this.team} 천사가 ${unitLabel}을(를) 부활시켰습니다! (남은 횟수: ${this.reviveCount})`, true);
+            }
+        }
+        
+        this.nextReviveCheckTime = now + this.reviveCheckInterval;
+        
+        // 부활 능력이 없는 천사는 여기서 return 안함
+        if (this.canRevive) {
+            return;
+        }
+    }
+}
 
                 if (this.type === 'bomberman') {
                     const team1Side = document.getElementById('team1-side');
@@ -2359,8 +2383,11 @@ updateChargeDisplay() {
         function startBattle() {
             if (battleActive) return;
             
+            
             resetBattle();
             battleActive = true;
+
+                angelCount = { team1: 0, team2: 0 };
 
             const team1Name = document.getElementById('team1Name').value;
             const team2Name = document.getElementById('team2Name').value;
@@ -2574,7 +2601,7 @@ u.updateDisplay();
     if (avatar) {
         const icons = {
             'knight': '🗡️', 'archer': '🏹', 'snowman': '🐦',
-            'healer': '⚕️', 'shielder': '🛡️', 'bomberman': '💣',
+            'healer': '💊', 'shielder': '🛡️', 'bomberman': '💣',
             'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
             'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖'
         };
