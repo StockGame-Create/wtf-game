@@ -796,8 +796,6 @@
     
     <button class="btn btn-secondary" onclick="resetBattle()">🔄 초기화</button>
        <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px 20px;" onclick="openUnitInfo()">📖 유닛 정보</button>
-    <button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
-<button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
 <button class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 10px 20px; margin-left: 20px;" onclick="openBossMode()">👑 보스전</button>
 </div>
         </div>
@@ -1428,7 +1426,7 @@ let bossMode = {
     },
     cave: {
         icon: '🛖',
-        name: '동굴',
+        name: '유닛 동굴',
         theme: '중세',
         stats: 'HP: 255 | 공격: 5 | 속도: 0.1\n공격속도: 11초 | 사거리: 660',
         ability: '6초 후 첫 소환, 이후 12초마다 선택한 유닛 소환 (HP 50 소모). 천천히 움직입니다. (단, 동굴은 체력 회복 불가.)'
@@ -1459,7 +1457,7 @@ let bossMode = {
         name: '사탄',
         theme: '신화',
         stats: 'HP: 150 | 공격: 10 | 속도: 1.5\n공격속도: 8초 | 사거리: 340',
-        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 밀치기+10 데미지. 해제 시 추가 45 데미지. (단, 보스를 빙의 시킬 수 없습니다.)'
+        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 밀치기+10 데미지. 해제 시 추가 30 데미지. (단, 보스를 빙의 시킬 수 없습니다.)'
     },
     golem: {
         icon: '🗿',
@@ -3293,7 +3291,7 @@ u.type = u.originalType;
 
 // ★ 오크 체력 완전 무시! 원래 유닛 HP만 사용
 u.maxHp = u.originalMaxHp;
-u.hp = u.originalCurrentHp - 25;  // 빙의 직전 HP에서 30 감소
+u.hp = u.originalCurrentHp - 10;  // 빙의 직전 HP에서 30 감소
 
 if (u.hp <= 0) {
     u.hp = 0;
