@@ -2599,12 +2599,12 @@ u.updateDisplay();
     // 아바타 복구
     const avatar = u.element.querySelector('.soldier-avatar');
     if (avatar) {
-        const icons = {
-            'knight': '🗡️', 'archer': '🏹', 'snowman': '🐦',
-            'healer': '💊', 'shielder': '🛡️', 'bomberman': '💣',
-            'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
-            'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖'
-        };
+      const icons = {
+        'knight': '🗡️', 'archer': '🏹', 'snowman': '🐦',
+        'healer': '⚕️', 'shielder': '🛡️', 'bomberman': '💣',
+        'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
+        'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄'
+    };
         avatar.textContent = icons[u.originalType] || '🗡️';
         avatar.style.filter = '';
     }
