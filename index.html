@@ -1487,8 +1487,8 @@ const unitDescriptions = {
         name: '유니콘',
         theme: '신화',
         stats: 'HP: 200 | 공격: 10~90 | 속도: 1\n공격속도: 3초 | 사거리: 100',
-        ability: '2.5초마다 차지 +1 (최대 6). 차지당 공격력 +15. 2차지 이상에서 공격 시 150px 후퇴하고 차지 초기화.',
-        story: '차징 중독 유니콘. 2.5초마다 차지 쌓으며 혼자 흥분함. 6단계 차지하면 공격력 100! 그리고 200m 도망감.'
+        ability: '1.5초마다 차지 +1 (최대 6). 차지당 공격력 +15. 2차지 이상에서 공격 시 150px 후퇴하고 차지 초기화.',
+        story: '차징 중독 유니콘. 1.5초마다 차지 쌓으며 혼자 흥분함. 6단계 차지하면 공격력 100! 그리고 200m 도망감.'
     },
     spirit: {
         icon: '✨',
@@ -1807,7 +1807,7 @@ if (themeSelect && themeSelect.value === 'mythology') {
     this.theme = 'mythology';
     this.chargeLevel = 0;
     this.maxChargeLevel = 6;
-    this.chargeInterval = 2500;
+    this.chargeInterval = 1500;
     this.nextChargeTime = 0;
     } else if (type === 'cloud') {
     this.maxHp = 100;  // 궁수 80 → 85
