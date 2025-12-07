@@ -402,6 +402,78 @@
             font-weight: bold;
             margin-top: 2px;
         }
+
+        .boss-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border: 3px solid rgba(255,255,255,0.2);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.boss-card:hover {
+    transform: translateY(-10px);
+    border-color: #4CAF50;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5);
+}
+
+.boss-card-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.boss-card-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.boss-card-stats {
+    font-size: 12px;
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.boss-card-select {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.boss-card-select:hover {
+    background: #45a049;
+}
+
+.selected-unit-item {
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-unit-item .unit-icon {
+    font-size: 32px;
+}
+
+.selected-unit-item .remove-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+}
         .special-indicator {
             position: absolute;
             top: -20px;
@@ -654,7 +726,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>⚔️ 추억의 전쟁 게임 ⚔️</h1>
+        <h1>WTF (Made by Unvul)</h1>
         
         <div class="setup-area">
             <div class="team-setup">
@@ -721,10 +793,12 @@
         <div class="battle-controls">
            <div class="battle-controls">
     <button class="btn btn-primary" onclick="startBattle()">⚔️ 전투 시작</button>
+    
     <button class="btn btn-secondary" onclick="resetBattle()">🔄 초기화</button>
        <button class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px 20px;" onclick="openUnitInfo()">📖 유닛 정보</button>
     <button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
-
+<button class="btn" style="background: linear-gradient(90deg, #ff6b6b, #ff4444); padding: 10px 20px; margin-left: 20px;" onclick="increaseDamage()" id="damageBtn">💪 공격력 +100% (100%)</button>
+<button class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 10px 20px; margin-left: 20px;" onclick="openBossMode()">👑 보스전</button>
 </div>
         </div>
 
@@ -735,6 +809,52 @@
             <button class="close-modal" onclick="closeUnitInfo()">×</button>
         </div>
         <div class="unit-grid" id="unitGrid"></div>
+    </div>
+</div>
+
+<!-- 보스전 모달 -->
+<div class="unit-info-modal" id="bossModeModal">
+    <div class="unit-info-content">
+        <div class="unit-info-header">
+            <h2 id="bossModalTitle">👑 보스전 - 라운드 1</h2>
+            <button class="close-modal" onclick="closeBossMode()">×</button>
+        </div>
+        
+        <div id="bossCardSelection" style="display: block;">
+         <div style="text-align: center; margin-bottom: 20px;">
+    <p style="font-size: 16px; margin-bottom: 10px;">선택한 유닛: <span id="selectedCount">0</span> / 5</p>
+</div>
+            
+            <div id="cardContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <!-- 카드들이 여기 생성됨 -->
+            </div>
+            
+        
+            
+            <div id="selectedUnits" style="margin-top: 20px;">
+                <h3 style="margin-bottom: 10px;">선택한 유닛:</h3>
+                <div id="selectedUnitsList" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <!-- 선택된 유닛들 표시 -->
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="startBossBattle()" id="startBossBtn" disabled>⚔️ 보스전 시작</button>
+            </div>
+        </div>
+        
+        <div id="bossRoundResult" style="display: none; text-align: center;">
+            <h2 style="color: #4CAF50; font-size: 32px; margin-bottom: 20px;">🎉 라운드 클리어!</h2>
+            <p style="font-size: 18px; margin-bottom: 20px;">현재 라운드: <span id="currentRound">1</span></p>
+            <p style="font-size: 16px; margin-bottom: 30px;">유닛 1개를 교체하세요</p>
+            
+            <div id="replaceUnitSelection" style="margin-bottom: 20px;">
+                <h3>제거할 유닛 선택:</h3>
+                <div id="currentUnitsList" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 10px;">
+                    <!-- 현재 유닛들 표시 -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -750,6 +870,15 @@
         let units = { team1: [], team2: [] };
         let battleActive = false;
         let isFast = false;
+        // ⭐ 이 부분 추가
+let bossMode = {
+    active: false,
+    round: 1,
+    selectedUnits: [],
+    rerollsLeft: 2,
+    currentCards: [],
+    maxRecord: 0
+};
         const speedMultiplier = 3;
         const intervalDelayBase = 20;
         const battlefield = document.getElementById('battlefield');
@@ -994,6 +1123,28 @@
         </div>
     </div>
     <div class="unit-config">
+    <div class="unit-header"><strong>☁️ 구름</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDCloudFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDCloudFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDCloudFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDCloudBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDCloudBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDCloudBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDCloudSpecial" value="20" min="0" max="100"></div>
+    </div>
+</div>
+    <div class="unit-config">
         <div class="unit-header"><strong>👼 천사</strong></div>
         <div class="unit-controls">
             <div class="control-group">
@@ -1081,6 +1232,50 @@
             <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDUnicornSpecial" value="20" min="0" max="100"></div>
         </div>
     </div>
+    <div class="unit-config">
+    <div class="unit-header"><strong>✨ 정령</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDSpiritFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDSpiritFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDSpiritFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDSpiritBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDSpiritBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDSpiritBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDSpiritSpecial" value="20" min="0" max="100"></div>
+    </div>
+</div>
+<div class="unit-config">
+    <div class="unit-header"><strong>🌳 신비한 나무</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDTreeFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDTreeFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDTreeFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDTreeBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDTreeBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDTreeBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDTreeSpecial" value="0" min="0" max="100"></div>
+    </div>
+</div>
 `;
 
 
@@ -1208,7 +1403,7 @@
         name: '힐러',
         theme: '중세',
         stats: 'HP: 120 | 공격: X | 속도: 1\n회복 주기: 4초  \n사거리: 150',
-        ability: '4초마다 아군 전체를 최대 HP의 20% 회복합니다. (신화 유닛은 2%만 회복)'
+        ability: '4초마다 아군 전체를 최대 HP의 20% 회복합니다. (신화 유닛은 2%만 회복) (단, 힐러는 4명이상 배치할 시 4번째 이상부터 회복 불가.)'
     },
     hammerman: {
         icon: '🔨',
@@ -1245,6 +1440,13 @@
         stats: 'HP: 110 | 공격: 20 | 속도: 2.5\n공격속도: 2.5초 | 사거리: 120',
         ability: '빠른 공격속도의 근접 전투 유닛. 기사보다 빠릅니다.'
     },
+    cloud: {
+    icon: '☁️',
+    name: '구름',
+    theme: '신화',
+    stats: 'HP: 100 | 공격: 30 | 속도: 1.5\n공격속도: 5.8초 | 사거리: 360',
+    ability: '원거리 공격 유닛. 궁수보다 공격력이 높습니다.'
+},
     angel: {
         icon: '👼',
         name: '천사',
@@ -1256,23 +1458,37 @@
         icon: '😈',
         name: '사탄',
         theme: '신화',
-        stats: 'HP: 250 | 공격: 10 | 속도: 1.5\n공격속도: 8초 | 사거리: 800',
-        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 밀치기+10 데미지. 해제 시 추가 40 데미지.'
+        stats: 'HP: 150 | 공격: 10 | 속도: 1.5\n공격속도: 8초 | 사거리: 340',
+        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 밀치기+10 데미지. 해제 시 추가 45 데미지. (단, 보스를 빙의 시킬 수 없습니다.)'
     },
     golem: {
         icon: '🗿',
         name: '골렘',
         theme: '신화',
-        stats: 'HP: 330 | 공격: 80 | 속도: 0.3\n공격속도: 10초 | 사거리: 60',
+        stats: 'HP: 360 | 공격: 80 | 속도: 0.3\n공격속도: 10초 | 사거리: 60',
         ability: '느리지만 매우 강력한 공격. 주변 80 범위의 적에게 50% 스플래시 데미지.'
     },
     unicorn: {
         icon: '🦄',
         name: '유니콘',
         theme: '신화',
-        stats: 'HP: 200 | 공격: 10~130 | 속도: 0.6\n공격속도: 3초 | 사거리: 100',
-        ability: '2.5초마다 차지 +1 (최대 6). 차지당 공격력 +20. 2차지 이상에서 공격 시 150px 후퇴하고 차지 초기화.'
-    }
+        stats: 'HP: 200 | 공격: 10~90 | 속도: 1\n공격속도: 3초 | 사거리: 100',
+        ability: '2.5초마다 차지 +1 (최대 6). 차지당 공격력 +15. 2차지 이상에서 공격 시 150px 후퇴하고 차지 초기화.'
+    },
+    spirit: {
+    icon: '✨',
+    name: '정령',
+    theme: '신화',
+    stats: 'HP: 80 | 공격: 15 | 속도: 1.5\n공격속도: 3초 | 사거리: 160',
+    ability: '사망 시 요정 2마리로 분열. 요정 사망 시 나비 2마리로 분열하여 총 4마리까지 증식합니다.'
+},
+tree: {
+    icon: '🌳',
+    name: '신비한 나무',
+    theme: '신화',
+    stats: 'HP: 200 | 공격: 5 | 속도: 0.05\n어그로 주기: 10초 | 어그로 적용: 4초 | 사거리: 80',
+    ability: '8초마다 적 1명의 어그로를 끌어 4초 후 범위 내에 있으면 400px 밀어냅니다. (첫 번째 나무만 기능 활성화), (단, 나무는 빙의 불가.)'
+}
 };
 
 function openUnitInfo() {
@@ -1320,10 +1536,13 @@ document.addEventListener('click', function(e) {
 // 변경 후:
 let unitTypes = ['Knight', 'Archer', 'Snowman', 'Golem', 'Shielder', 'Healer', 'Bomberman', 'Hammerman', 'Ninja', 'Cave'];
 
+
+
+
 // 신화 테마이면 추가
 const themeSelect = document.getElementById(`team${teamId}ThemeSelect`);
 if (themeSelect && themeSelect.value === 'mythology') {
-    unitTypes.push('Orc', 'Angel', 'Satan', 'Unicorn'); // Unicorn 추가
+    unitTypes.push('Orc', 'Angel', 'Satan', 'Unicorn', 'Spirit', 'Cloud'); // Unicorn 추가
 }
 
             if (totalCount === 0) {
@@ -1437,6 +1656,7 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     this.speed = 1;
                     this.range = 250;
                     this.healInterval = 4000;
+ this.canHeal = true;
                     this.theme = 'medieval';
                 } else if (type === 'orc') {
                     this.maxHp = 110;
@@ -1533,14 +1753,14 @@ if (themeSelect && themeSelect.value === 'mythology') {
     angelCount[teamKey]++;
     this.canRevive = angelCount[teamKey] <= 1;
                 } else if (type === 'satan') {
-                    this.maxHp = 135;
+                    this.maxHp = 150;
                     this.hp = this.maxHp;
                     this.baseDamage = 10;
                     this.damage = 10;
-                    this.baseAttackSpeed = 9000;
-                    this.attackSpeed = 9000;
+                    this.baseAttackSpeed = 8000;
+                    this.attackSpeed = 8000;
                     this.speed = 1.5;
-                    this.range = 800;
+                    this.range = 340;
                     this.theme = 'mythology';
                     this.possessionDuration = 4000;
          } else if (type === 'unicorn') {
@@ -1550,15 +1770,95 @@ if (themeSelect && themeSelect.value === 'mythology') {
     this.damage = 10;
     this.baseAttackSpeed = 3000;
     this.attackSpeed = 3000;
-    this.speed = 0.5;
+    this.speed = 1;
     this.range = 80;
     this.theme = 'mythology';
     this.chargeLevel = 0;
     this.maxChargeLevel = 6;
     this.chargeInterval = 2500;
     this.nextChargeTime = 0;
+    } else if (type === 'cloud') {
+    this.maxHp = 100;  // 궁수 80 → 85
+    this.hp = this.maxHp;
+    this.baseDamage = 30;  // 궁수 25 → 27
+    this.damage = 30;
+    this.baseAttackSpeed = 5800;  // 궁수 4600 → 4400
+    this.attackSpeed = 5800;
+    this.speed = 1.4;  // 궁수 1.7 → 1.8
+    this.range = 360;  // 궁수 400 → 420
+    this.theme = 'mythology';
+    } else if (type === 'boss') {
+    this.maxHp = 750;
+    this.hp = this.maxHp;
+    this.baseDamage = 120;
+    this.damage = 120;
+    this.baseAttackSpeed = 4000;
+    this.attackSpeed = 4000;
+    this.speed = 0.9;
+    this.range = 150;
+    this.splashRange = 100;
+    this.theme = 'boss';
+
+
+// Unit 클래스 생성자에서
+} else if (type === 'tree') {
+    this.maxHp = 200;
+    this.hp = this.maxHp;
+    this.baseDamage = 0;
+    this.damage = 0;
+    this.baseAttackSpeed = 8000;
+    this.attackSpeed = 8000;
+    this.speed = 0.05;
+    this.range = 80;
+    this.theme = 'mythology';
+    this.tauntCooldown = 10000;
+    this.nextTauntTime = 0;
+    this.tauntedTarget = null;
+    this.tauntStartTime = 0;
+    this.tauntDuration = 4000;
+    this.pushRange = 150;
+    this.pushDistance = 400;
+    
+    // 천사처럼 첫 번째만 기능 활성화
+
+
+
+// ⭐ this.element = this.createElement(); 이 줄 이전에 위 코드가 있어야
+
+
+    } else if (type === 'spirit') {
+    this.maxHp = 80;
+    this.hp = this.maxHp;
+    this.baseDamage = 15;
+    this.damage = 15;
+    this.baseAttackSpeed = 3000;
+    this.attackSpeed = 3000;
+    this.speed = 1.5;
+    this.range = 160;
+    this.theme = 'mythology';
+} else if (type === 'fairy') {
+    this.maxHp = 60;
+    this.hp = this.maxHp;
+    this.baseDamage = 10;
+    this.damage = 10;
+    this.baseAttackSpeed = 3000;
+    this.attackSpeed = 3000;
+    this.speed = 1.8;
+    this.range = 80;
+    this.theme = 'mythology';
+} else if (type === 'butterfly') {
+    this.maxHp = 40;
+    this.hp = this.maxHp;
+    this.baseDamage = 5;
+    this.damage = 5;
+    this.baseAttackSpeed = 3000;
+    this.attackSpeed = 3000;
+    this.speed = 2;
+    this.range = 80;
+    this.theme = 'mythology';
+
                 } else {
-                    this.maxHp = 330;
+                    this.maxHp = 360;
                     this.hp = this.maxHp;
                     this.baseDamage = 80;
                     this.damage = 80;
@@ -1625,6 +1925,32 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     } else if (this.type === 'unicorn') {
     icon = '🦄';
     typeLabel = '유니콘';
+    } else if (this.type === 'spirit') {
+    icon = '✨';
+    typeLabel = '정령';
+} else if (this.type === 'fairy') {
+    icon = '🧚‍♀️';
+    typeLabel = '요정';
+} else if (this.type === 'butterfly') {
+    icon = '🦋';
+    typeLabel = '나비';
+    } else if (this.type === 'cloud') {
+    icon = '☁️';
+    typeLabel = '구름';
+    } else if (this.type === 'boss') {
+    icon = '💀';
+    typeLabel = '보스';
+
+} else if (this.type === 'tree') {
+    icon = '🌳';
+    typeLabel = '나무';
+if (this.type === 'tree' && this.canTaunt === false) {
+    icon = `<span style="filter: invert(1); opacity: 0.6;">${icon}</span>`;
+}
+    
+
+
+
                 } else {
                     icon = '🗿';
                     typeLabel = '골렘';
@@ -1641,7 +1967,16 @@ if (this.type === 'angel') {
     }
 } else if (this.type === 'unicorn') {
     extraInfo = `<div class="charge-level" style="color: #ff69b4; font-size: 11px; font-weight: bold; margin-top: 2px;">차지: 0 (10)</div>`;
-}             
+}  
+
+
+
+// 힐러 능력 비활성화 시 아이콘 반전
+if (this.type === 'healer' && this.canHeal === false) {
+    icon = `<span style="filter: invert(1); opacity: 0.6;">${icon}</span>`;
+}
+
+
               div.innerHTML = `
     <div class="soldier-avatar">${icon}</div>
     <div class="soldier-info ${this.type}">
@@ -1670,6 +2005,10 @@ if (this.type === 'angel') {
 
                 return div;
             }
+
+            
+
+            
 
 setTeamColor() {
     const healthFill = this.infoElement?.querySelector('.health-fill');
@@ -1771,6 +2110,43 @@ setTeamColor() {
 
                 if (this.hp <= 0) {
                     this.hp = 0;
+
+                    if (this.hp <= 0) {
+    this.hp = 0;
+    
+    // 정령 분열 로직
+    if (this.type === 'spirit' || this.type === 'fairy') {
+        const spawnType = this.type === 'spirit' ? 'fairy' : 'butterfly';
+        const spawnCount = 2;
+        
+        for (let i = 0; i < spawnCount; i++) {
+            const spawnedUnit = new Unit(spawnType, this.team, 1, 20, Math.random() * 1000);
+            spawnedUnit.row = this.row;
+            spawnedUnit.x = this.x + (Math.random() - 0.5) * 60;
+            spawnedUnit.y = this.y + (Math.random() - 0.5) * 60;
+            
+            if (this.team === units.team1[0].team) {
+                units.team1.push(spawnedUnit);
+            } else {
+                units.team2.push(spawnedUnit);
+            }
+            
+            const sideId = this.team === units.team1[0].team ? 'team1-side' : 'team2-side';
+            const side = document.getElementById(sideId);
+            if (side) {
+                spawnedUnit.element.style.transform = `translate(${spawnedUnit.x}px, ${spawnedUnit.y}px)`;
+                side.appendChild(spawnedUnit.element);
+                spawnedUnit.element.classList.add(this.team === units.team1[0].team ? 'team1' : 'team2');
+                spawnedUnit.setTeamColor();
+            }
+        }
+        
+        const spawnLabel = spawnType === 'fairy' ? '요정' : '나비';
+        addLog(`${this.team} ${this.type === 'spirit' ? '정령' : '요정'}이 죽어 ${spawnLabel} 2마리가 생성되었습니다!`, true);
+    }
+    
+    this.alive = false;
+}
                     
                
  
@@ -1810,26 +2186,52 @@ attack(target) {
         return;
     }
 
-                if (this.type === 'healer') {
-                    if (now < this.nextHealTime) return;
-                    const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
-                    allies.forEach(a => {
-                        if (a.alive && a.type !== 'cave') {
-                            let healMultiplier = 1.0;
-                            if (a.theme && a.theme !== 'medieval') {
-                                healMultiplier = 0.1;
-                            }
-                            const healAmount = Math.floor(a.maxHp * 0.2 * healMultiplier);
-                            a.hp = Math.min(a.maxHp, a.hp + healAmount);
-                            a.updateDisplay();
-                            a.flashHealthBar();
-                        }
-                    });
-                    addLog(`${this.team} 힐러가 아군을 회복했습니다!`, true);
-                    this.nextHealTime = now + this.healInterval;
-                    return;
-                }
+           if (this.type === 'healer') {
+    // 능력이 비활성화되어 있으면 힐 불가
+    if (!this.canHeal) {
+        return;
+    }
+    
+    if (now < this.nextHealTime) return;
+    const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
+    allies.forEach(a => {
+        if (a.alive && a.type !== 'cave') {
+            let healMultiplier = 1.0;
+            if (a.theme && a.theme !== 'medieval') {
+                healMultiplier = 0.1;
+            }
+            const healAmount = Math.floor(a.maxHp * 0.2 * healMultiplier);
+            a.hp = Math.min(a.maxHp, a.hp + healAmount);
+            a.updateDisplay();
+            a.flashHealthBar();
+        }
+    });
+    addLog(`${this.team} 힐러가 아군을 회복했습니다!`, true);
+    this.nextHealTime = now + this.healInterval;
+    return;
+}
 
+// ❌ 이 코드 전체 삭제!
+// 나무 어그로 로직
+if (this.type === 'tree') {
+    if (!this.canTaunt) return; // 기능 비활성화면 리턴
+    
+    if (now < this.nextTauntTime) return;
+    
+    const enemies = this.team === units.team1[0].team ? units.team2 : units.team1;
+    const aliveEnemies = enemies.filter(e => e.alive);
+    
+    if (aliveEnemies.length > 0) {
+        // 랜덤 적 선택
+        const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+        this.tauntedTarget = randomEnemy;
+        this.tauntStartTime = now;
+        
+        addLog(`${this.team} 신비한 나무가 ${randomEnemy.team}의 어그로를 끌었습니다!`, true);
+        this.nextTauntTime = now + this.tauntCooldown;
+    }
+    return;
+}
 
 
 
@@ -1899,7 +2301,7 @@ attack(target) {
             const death = this.recentDeaths.shift();
             const deadUnit = death.unit;
             
-            if (deadUnit.type === 'angel' || deadUnit.type === 'cave') {
+            if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit') {
                 this.nextReviveCheckTime = now + this.reviveCheckInterval;
                 return;
             }
@@ -2101,8 +2503,17 @@ if (this.type === 'unicorn') {
                 target.takeDamage(damage);
                 
                // attack 함수의 사탄 빙의 부분을 이렇게 수정:
-if (this.type === 'satan' && target.alive && !target.isPossessed && target.type !== 'angel' && target.type !== 'cave') {
+if (this.type === 'satan' && target.alive && !target.isPossessed && target.type !== 'angel' && target.type !== 'cave' && target.type !== 'tree') {
     
+    // ⭐ 보스는 빙의 불가, 대신 강력한 공격
+    if (target.type === 'boss') {
+        let damage = 55 * damageMultiplier;  // 10 → 55
+        target.takeDamage(damage);
+        addLog(`${this.team} 사탄이 보스를 공격! 보스는 빙의시킬 수 없습니다, 그러나 ${Math.floor(damage)}로 데미지 상승!)`, true);
+        this.nextAttackTime = now + this.attackSpeed;
+        return;
+    }
+
     // ★ 매번 데미지 적용
     let damage = this.damage * damageMultiplier;
     target.takeDamage(damage);
@@ -2380,8 +2791,201 @@ updateChargeDisplay() {
 }
         }
 
+        // 보스전 열기
+function openBossMode() {
+    bossMode = {
+        active: true,
+        round: 1,
+        selectedUnits: [],
+        currentCards: [],
+        maxRecord: 0
+    };
+    
+    document.getElementById('bossModeModal').classList.add('active');
+    document.getElementById('bossModalTitle').textContent = '👑 보스전 - 라운드 1';
+    document.getElementById('bossCardSelection').style.display = 'block';
+    document.getElementById('bossRoundResult').style.display = 'none';
+    
+    generateCards(3);
+    updateBossUI();
+}
+
+// 보스전 닫기
+function closeBossMode() {
+    document.getElementById('bossModeModal').classList.remove('active');
+    bossMode.active = false;
+}
+
+// 카드 생성
+function generateCards(count) {
+    const allUnitTypes = [
+        'knight', 'archer', 'snowman', 'shielder', 
+        'hammerman', 'bomberman', 'ninja', 'cave',
+        'orc', 'cloud', 'satan', 'golem', 'unicorn', 'spirit',
+    ];
+    
+    bossMode.currentCards = [];
+    for (let i = 0; i < count; i++) {
+        const randomType = allUnitTypes[Math.floor(Math.random() * allUnitTypes.length)];
+        const randomPosition = Math.random() < 0.5 ? 'front' : 'back';
+        bossMode.currentCards.push({ type: randomType, position: randomPosition });
+    }
+    
+    displayCards();
+}
+
+// 카드 표시
+function displayCards() {
+    const container = document.getElementById('cardContainer');
+    container.innerHTML = '';
+    
+    bossMode.currentCards.forEach((cardData, index) => {
+        const unitInfo = unitDescriptions[cardData.type];
+        const positionText = cardData.position === 'front' ? '⚔️ 전방' : '🛡️ 후방';
+        const positionColor = cardData.position === 'front' ? '#ff6b6b' : '#4ecdc4';
+        
+        const card = document.createElement('div');
+        card.className = 'boss-card';
+        card.innerHTML = `
+            <div class="boss-card-icon">${unitInfo.icon}</div>
+            <div class="boss-card-name">${unitInfo.name}</div>
+            <div style="font-size: 14px; color: ${positionColor}; font-weight: bold; margin-bottom: 10px;">${positionText}</div>
+            <div class="boss-card-stats">${unitInfo.stats.replace(/\n/g, '<br>')}</div>
+            <button class="boss-card-select" onclick="selectCard(${index})">선택</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function selectCard(cardIndex) {
+    if (bossMode.selectedUnits.length >= 5) {
+        alert('이미 5개의 유닛을 선택했습니다!');
+        return;
+    }
+    
+    // 선택한 카드의 정보 가져오기
+    const selectedCard = bossMode.currentCards[cardIndex];
+    
+    // 유닛 추가
+    bossMode.selectedUnits.push({
+        type: selectedCard.type,
+        position: selectedCard.position
+    });
+    
+    // 선택 후 모든 카드 새로고침
+    generateCards(3);
+    
+    updateBossUI();
+}
+
+// 선택된 유닛 제거
+function removeSelectedUnit(index) {
+    bossMode.selectedUnits.splice(index, 1);
+    updateBossUI();
+}
+
+// UI 업데이트
+function updateBossUI() {
+    document.getElementById('selectedCount').textContent = bossMode.selectedUnits.length;
+    
+    // 선택된 유닛 표시
+    const listContainer = document.getElementById('selectedUnitsList');
+    listContainer.innerHTML = '';
+    
+    bossMode.selectedUnits.forEach((unitData, index) => {
+        // unitData가 객체인지 확인
+        const unitType = typeof unitData === 'string' ? unitData : unitData.type;
+        const unitPosition = typeof unitData === 'string' ? 'front' : unitData.position;
+        
+        const unitInfo = unitDescriptions[unitType];
+        if (!unitInfo) {
+            console.error('유닛 정보 없음:', unitType);
+            return;
+        }
+        
+        const positionText = unitPosition === 'front' ? '전방' : '후방';
+        const item = document.createElement('div');
+        item.className = 'selected-unit-item';
+        item.innerHTML = `
+            <div class="unit-icon">${unitInfo.icon}</div>
+            <div>
+                <div>${unitInfo.name}</div>
+                <div style="font-size: 11px; color: #ffd700;">${positionText}</div>
+            </div>
+            <button class="remove-btn" onclick="removeSelectedUnit(${index})">×</button>
+        `;
+        listContainer.appendChild(item);
+    });
+    
+    // 시작 버튼
+    const startBtn = document.getElementById('startBossBtn');
+    if (bossMode.selectedUnits.length === 5) {
+        startBtn.disabled = false;
+        if (bossMode.round === 1) {
+            startBtn.textContent = '⚔️ 보스전 시작';
+        } else {
+            startBtn.textContent = `⚔️ 라운드 ${bossMode.round} 시작`;
+        }
+        startBtn.onclick = startBossBattle;
+    } else {
+        startBtn.disabled = true;
+    }
+}
+
+// 리롤
+function rerollCards() {
+    if (bossMode.rerollsLeft <= 0) {
+        alert('리롤 횟수를 모두 사용했습니다!');
+        return;
+    }
+    
+    bossMode.rerollsLeft--;
+    const cardCount = bossMode.round === 1 ? 3 : 4;
+    generateCards(cardCount);
+    updateBossUI();
+}
+
+function startBossBattle() {
+    closeBossMode();
+    
+    console.log('전투 시작 - 선택된 유닛:', bossMode.selectedUnits); // 디버깅
+    
+    resetBattle();
+    battleActive = true;
+    bossMode.active = true;
+    
+    const playerTeam = '플레이어';
+    const bossTeam = '보스';
+    
+    // 플레이어 유닛 생성 ⭐ 수정
+    bossMode.selectedUnits.forEach((unitData, index) => {
+        console.log(`유닛 ${index} 생성:`, unitData); // 디버깅
+        
+        // ⭐ 핵심: unitData.type으로 접근!
+        const unit = new Unit(unitData.type, playerTeam, 1, 20, index);
+        unit.row = unitData.position; // ⭐ 위치도 설정
+        units.team1.push(unit);
+    });
+    
+    // 보스 생성
+    const boss = new Unit('boss', bossTeam, 1, 0, 0);
+    boss.row = 'front';
+    units.team2.push(boss);
+    
+    renderBattlefield();
+    addLog(`👑 보스전 라운드 ${bossMode.round} 시작!`);
+    setBattleInterval();
+}
+
+// 보스전 승리 처리 (endBattle 함수 수정 필요)
+
         function startBattle() {
             if (battleActive) return;
+
+            // 힐러 개수 체크 및 능력 활성화 (처음 3개만)
+
+                bossMode.active = false;
+
             
             
             resetBattle();
@@ -2406,7 +3010,10 @@ updateChargeDisplay() {
     { name: 'Angel' },
     { name: 'Satan' },
     { name: 'Cave' },
-    { name: 'Unicorn' }
+    { name: 'Unicorn' },
+      { name: 'Spirit' },
+      { name: 'Cloud' },
+      { name: 'Tree' } 
 ];
 
             for (let i = 0; i < 2; i++) {
@@ -2443,6 +3050,47 @@ updateChargeDisplay() {
                     }
                 }
             }
+
+            // 힐러 개수 체크 및 능력 활성화 (처음 3개만)
+const checkHealers = (teamArray, teamName) => {
+    const healers = teamArray.filter(u => u.type === 'healer');
+    
+    healers.forEach((healer, index) => {
+        if (index < 3) {
+            // 처음 3개는 활성화
+            healer.canHeal = true;
+        } else {
+            // 4번째부터는 비활성화
+            healer.canHeal = false;
+            addLog(`⚠️ ${teamName}: ${index + 1}번째 힐러는 능력이 비활성화되었습니다! (최대 3개)`, true);
+        }
+    });
+};
+
+checkHealers(units.team1, team1Name);
+checkHealers(units.team2, team2Name);
+
+const checkTrees = (teamArray, teamName) => {
+    const trees = teamArray.filter(u => u.type === 'tree');
+    
+    trees.forEach((tree, index) => {
+        if (index === 0) {
+            // 첫 번째 나무만 활성화
+            tree.canTaunt = true;
+        } else {
+            // 두 번째부터는 비활성화
+            tree.canTaunt = false;
+            addLog(`⚠️ ${teamName}: ${index + 1}번째 나무는 능력이 비활성화되었습니다! (최대 1개)`, true);
+        }
+    });
+};
+
+checkTrees(units.team1, team1Name);
+checkTrees(units.team2, team2Name);
+
+
+
+renderBattlefield();
 
             renderBattlefield();
             addLog('⚔️ 전투 시작! ⚔️');
@@ -2515,9 +3163,85 @@ updateChargeDisplay() {
                 team2Side.appendChild(unit.element);
                 unit.element.classList.add('team2');
                 unit.setTeamColor();
+
+                // battleLoop 함수 안, 유니콘 차지 시스템 아래에 추가
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'tree' && u.alive && u.canTaunt && u.tauntedTarget) {
+        const target = u.tauntedTarget;
+        const elapsed = now - u.tauntStartTime;
+        
+        if (elapsed >= u.tauntDuration && target.alive) {
+            // 거리 체크
+            const team1Side = document.getElementById('team1-side');
+            const team2Side = document.getElementById('team2-side');
+            const team1Rect = team1Side.getBoundingClientRect();
+            const team2Rect = team2Side.getBoundingClientRect();
+            
+            const treeInTeam1 = units.team1.includes(u);
+            const targetInTeam1 = units.team1.includes(target);
+            
+            const treeAbsX = (treeInTeam1 ? team1Rect.left : team2Rect.left) + u.x;
+            const treeAbsY = (treeInTeam1 ? team1Rect.top : team2Rect.top) + u.y;
+            const targetAbsX = (targetInTeam1 ? team1Rect.left : team2Rect.left) + target.x;
+            const targetAbsY = (targetInTeam1 ? team1Rect.top : team2Rect.top) + target.y;
+            
+            const distance = Math.sqrt((targetAbsX - treeAbsX) ** 2 + (targetAbsY - treeAbsY) ** 2);
+            
+            if (distance <= u.pushRange) {
+                const targetSide = targetInTeam1 ? team1Side : team2Side;
+                
+                // 나무 팀 기준으로 밀어내기
+                if (treeInTeam1) {
+                    target.x = Math.min(target.x + u.pushDistance, targetSide.offsetWidth - 40);
+                } else {
+                    target.x = Math.max(target.x - u.pushDistance, 40);
+                }
+                
+                target.element.style.transform = `translate(${target.x}px, ${target.y}px)`;
+                addLog(`${u.team} 신비한 나무가 ${target.team}을 밀어냈습니다!`, true);
+            }
+            
+            u.tauntedTarget = null;
+        }
+    }
+});
+
+                    // ⭐ 여기에 추가! 힐러 아이콘 반전 처리
+    [...units.team1, ...units.team2].forEach(unit => {
+        if (unit.type === 'healer' && !unit.canHeal) {
+            const avatar = unit.element.querySelector('.soldier-avatar');
+            if (avatar) {
+                avatar.style.filter = 'invert(1)';
+                avatar.style.opacity = '0.6';
+            }
+               const healthBar = unit.element.querySelector('.health-bar');
+        if (healthBar && !unit.element.querySelector('.disabled-text')) {
+            const disabledText = document.createElement('div');
+            disabledText.className = 'disabled-text';
+            disabledText.textContent = '회복 불가';
+            disabledText.style.cssText = 'color: #ff4444; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center;';
+            healthBar.parentNode.insertBefore(disabledText, healthBar.nextSibling);
+        }
+    }
+    // ⭐ 나무 처리 추가
+    if (unit.type === 'tree' && !unit.canTaunt) {
+        const avatar = unit.element.querySelector('.soldier-avatar');
+        if (avatar) {
+            avatar.style.filter = 'invert(1)';
+            avatar.style.opacity = '0.6';
+        }
+        const healthBar = unit.element.querySelector('.health-bar');
+        if (healthBar && !unit.element.querySelector('.disabled-text')) {
+            const disabledText = document.createElement('div');
+            disabledText.className = 'disabled-text';
+            disabledText.textContent = '기능 불가';
+            disabledText.style.cssText = 'color: #ff4444; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center;';
+            healthBar.parentNode.insertBefore(disabledText, healthBar.nextSibling);
+        }
+    }
+});
             });
         }
-
         function battleLoop() {
             const now = Date.now();
 
@@ -2569,7 +3293,7 @@ u.type = u.originalType;
 
 // ★ 오크 체력 완전 무시! 원래 유닛 HP만 사용
 u.maxHp = u.originalMaxHp;
-u.hp = u.originalCurrentHp - 40;  // 빙의 직전 HP에서 30 감소
+u.hp = u.originalCurrentHp - 25;  // 빙의 직전 HP에서 30 감소
 
 if (u.hp <= 0) {
     u.hp = 0;
@@ -2603,7 +3327,7 @@ u.updateDisplay();
         'knight': '🗡️', 'archer': '🏹', 'snowman': '🐦',
         'healer': '⚕️', 'shielder': '🛡️', 'bomberman': '💣',
         'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
-        'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄'
+        'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄',   'spirit': '✨', 'fairy': '🧚‍♀️', 'butterfly': '🦋', 'cloud': '☁️'   // 
     };
         avatar.textContent = icons[u.originalType] || '🗡️';
         avatar.style.filter = '';
@@ -2643,7 +3367,7 @@ u.updateDisplay();
         }
         if (now >= u.nextChargeTime && u.chargeLevel < u.maxChargeLevel) {
             u.chargeLevel++;
-            u.damage = u.baseDamage + (u.chargeLevel * 20);
+            u.damage = u.baseDamage + (u.chargeLevel * 15);
             u.nextChargeTime = now + u.chargeInterval;
             u.updateChargeDisplay();
             addLog(`${u.team} 유니콘 차지 ${u.chargeLevel}/6 (공격력: ${u.damage})`, true);
@@ -2724,19 +3448,26 @@ u.updateDisplay();
                     });
                 }
             });
-          const aliveTeam1 = units.team1.filter(u => u.alive);
+     const aliveTeam1 = units.team1.filter(u => u.alive);
 const aliveTeam2 = units.team2.filter(u => u.alive);
 
 updateTeamCounts();
 
-if (aliveTeam1.length === 0 || aliveTeam2.length === 0) {
-    endBattle(aliveTeam1.length > 0 ? units.team1[0].team : units.team2[0].team);
-    return;
-}
-
+// ⭐ 이 두 줄을 위로 이동
 const allUnits = [...units.team1, ...units.team2];
 const team1Name = units.team1[0]?.team;
 const team2Name = units.team2[0]?.team;
+
+// ⭐ team1Name, team2Name 사용
+const actualAliveTeam1 = aliveTeam1.filter(u => !u.isPossessed || u.originalTeam === team1Name).length +
+                          aliveTeam2.filter(u => u.isPossessed && u.originalTeam === team1Name).length;
+const actualAliveTeam2 = aliveTeam2.filter(u => !u.isPossessed || u.originalTeam === team2Name).length +
+                          aliveTeam1.filter(u => u.isPossessed && u.originalTeam === team2Name).length;
+
+if (actualAliveTeam1 === 0 || actualAliveTeam2 === 0) {
+    endBattle(actualAliveTeam1 > 0 ? team1Name : team2Name);
+    return;
+}
 
 const actualTeam1 = allUnits.filter(u => u.alive && u.team === team1Name);
 const actualTeam2 = allUnits.filter(u => u.alive && u.team === team2Name);
@@ -2744,6 +3475,22 @@ const actualTeam2 = allUnits.filter(u => u.alive && u.team === team2Name);
 actualTeam1.forEach(unit => {
     let closestTarget = null;
     let closestDistance = Infinity;
+
+    
+    // ⭐ 나무에게 어그로가 끌렸는지 확인
+    let tauntedBy = null;
+    actualTeam2.forEach(enemy => {
+        if (enemy.type === 'tree' && enemy.tauntedTarget === unit && enemy.alive) {
+            tauntedBy = enemy;
+        }
+    });
+    
+    // ⭐ 어그로 끌렸으면 무조건 그 나무를 공격 (4초 동안 유지)
+    if (tauntedBy) {
+        unit.moveTowards(tauntedBy);
+        unit.attack(tauntedBy);
+        return;  // ⭐ 다른 타겟 찾지 않고 여기서 종료
+    }
     
     actualTeam2.forEach(target => {
         const team1Rect = document.getElementById('team1-side').getBoundingClientRect();
@@ -2774,6 +3521,20 @@ actualTeam1.forEach(unit => {
 actualTeam2.forEach(unit => {
     let closestTarget = null;
     let closestDistance = Infinity;
+
+    let tauntedBy = null;
+    actualTeam1.forEach(enemy => {
+        if (enemy.type === 'tree' && enemy.tauntedTarget === unit && enemy.alive) {
+            tauntedBy = enemy;
+        }
+    });
+    
+    // 어그로 끌렸으면 무조건 그 나무를 공격
+    if (tauntedBy) {
+        unit.moveTowards(tauntedBy);
+        unit.attack(tauntedBy);
+        return;
+    }
     
     actualTeam1.forEach(target => {
         const team1Rect = document.getElementById('team1-side').getBoundingClientRect();
@@ -2831,19 +3592,116 @@ actualTeam2.forEach(unit => {
             team2CountsEl.querySelector('.details').innerHTML = makeDetails(t2.byType);
         }
 
-        function endBattle(winner) {
-            clearInterval(battleInterval);
-            battleActive = false;
-            
-            const announce = document.createElement('div');
-            announce.className = 'winner-announce';
-            announce.textContent = `🏆 ${winner} 승리! 🏆`;
-            document.body.appendChild(announce);
-            
-            addLog(`🏆 ${winner} 승리!`);
-            
-            setTimeout(() => announce.remove(), 4000);
-        }
+function endBattle(winner) {
+    clearInterval(battleInterval);
+    battleActive = false;
+    
+    // 일반 전투 (보스전이 아닐 때)
+    if (!bossMode.active) {
+        const announce = document.createElement('div');
+        announce.className = 'winner-announce';
+        announce.textContent = `🏆 ${winner} 승리! 🏆`;
+        document.body.appendChild(announce);
+        
+        addLog(`🏆 ${winner} 승리!`);
+        
+        setTimeout(() => announce.remove(), 4000);
+        return;
+    }
+    
+    // 보스전
+// 보스전
+if (winner === '플레이어') {
+    // 라운드 클리어 화면 표시
+    const announce = document.createElement('div');
+    announce.className = 'winner-announce';
+    announce.textContent = `🎉 라운드 ${bossMode.round} 클리어! 🎉`;
+    document.body.appendChild(announce);
+    
+    addLog(`🎉 라운드 ${bossMode.round} 클리어!`);
+    
+    if (bossMode.round > bossMode.maxRecord) {
+        bossMode.maxRecord = bossMode.round;
+    }
+    
+    setTimeout(() => {
+        announce.remove();
+        openNextRound();
+    }, 3000);
+
+    } else {
+        const announce = document.createElement('div');
+        announce.className = 'winner-announce';
+        announce.textContent = `💀 패배! 최종 라운드: ${bossMode.round}`;
+        document.body.appendChild(announce);
+        
+        addLog(`💀 보스전 종료! 최종 라운드: ${bossMode.round}, 최고 기록: ${bossMode.maxRecord}`);
+        
+        setTimeout(() => {
+            announce.remove();
+            bossMode.active = false;
+        }, 4000);
+    }
+}
+
+function openNextRound() {
+    bossMode.round++;
+    bossMode.rerollsLeft = 1;
+    
+    document.getElementById('bossModeModal').classList.add('active');
+    document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
+    document.getElementById('bossCardSelection').style.display = 'block';
+    document.getElementById('bossRoundResult').style.display = 'none';
+    
+    // 유닛 1개 제거 선택 모드
+    showReplaceMode();
+}
+
+// 교체 모드
+function showReplaceMode() {
+    const container = document.getElementById('cardContainer');
+    container.innerHTML = '<p style="text-align: center; font-size: 16px; color: #ffd700;">유지할 유닛 1개를 선택하세요 (나머지는 제거됩니다)</p>';
+    
+    const listContainer = document.getElementById('selectedUnitsList');
+    listContainer.innerHTML = '';
+    
+    // ⭐ 수정: unitData로 받고 .type으로 접근
+    bossMode.selectedUnits.forEach((unitData, index) => {
+        const unitInfo = unitDescriptions[unitData.type];  // ⭐ .type 추가
+        const positionText = unitData.position === 'front' ? '전방' : '후방';
+        
+        const item = document.createElement('div');
+        item.className = 'selected-unit-item';
+        item.style.cursor = 'pointer';
+        item.onclick = () => keepOneUnit(index);
+        item.innerHTML = `
+            <div class="unit-icon">${unitInfo.icon}</div>
+            <div>
+                <div>${unitInfo.name}</div>
+                <div style="font-size: 11px; color: #ffd700;">${positionText}</div>
+            </div>
+            <div style="color: #4CAF50; font-size: 12px;">클릭하여 유지</div>
+        `;
+        listContainer.appendChild(item);
+    });
+    
+    const startBtn = document.getElementById('startBossBtn');
+    if (startBtn) startBtn.style.display = 'none';
+}
+
+// 유닛 교체
+function keepOneUnit(index) {
+    const keptUnit = bossMode.selectedUnits[index];
+    bossMode.selectedUnits = [keptUnit];
+    
+    generateCards(3);
+    updateBossUI();
+    
+    const startBtn = document.getElementById('startBossBtn');
+    if (startBtn) startBtn.style.display = 'block';
+    
+    // 리롤 버튼 코드 삭제
+}
 
         function resetBattle() {
             clearInterval(battleInterval);
