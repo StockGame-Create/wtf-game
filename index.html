@@ -744,6 +744,65 @@
         .soldier.dead {
             animation: fade-out-death 1s ease-out forwards;
         }
+        @keyframes gear-glow {
+    0% { 
+        filter: drop-shadow(0 0 2px #ff0000);
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 16px #ff0000) drop-shadow(0 0 24px #ff4444);
+        transform: scale(1.1);
+    }
+    100% { 
+        filter: drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 16px #ff4444);
+        transform: scale(1);
+    }
+}
+
+/* 무적 상태 지속 시간 동안 계속 빛나게 */
+.soldier.killergear.invincible .soldier-avatar {
+    animation: gear-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes gear-pulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 16px #ff4444);
+    }
+    50% { 
+        filter: drop-shadow(0 0 12px #ff0000) drop-shadow(0 0 20px #ff4444);
+    }
+}
+/* 정비소 버프 효과 */
+.soldier.repair-buff .soldier-avatar {
+    filter: drop-shadow(0 0 10px #c0c0c0) 
+            drop-shadow(0 0 20px #808080)
+            drop-shadow(0 0 8px #a9a9a9)
+            brightness(1.1);
+    animation: armor-glow 1.2s ease-in-out infinite;
+}
+
+@keyframes armor-glow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 10px #c0c0c0) 
+                drop-shadow(0 0 20px #808080)
+                drop-shadow(0 0 8px #a9a9a9)
+                brightness(1.1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 15px #d3d3d3) 
+                drop-shadow(0 0 25px #a9a9a9)
+                drop-shadow(0 0 12px #c0c0c0)
+                brightness(1.2);
+    }
+}
+
+/* 전투 중 강조 효과 */
+.soldier.repair-buff:hover .soldier-avatar {
+    filter: drop-shadow(0 0 20px #ffd700) 
+            drop-shadow(0 0 30px #c0c0c0)
+            drop-shadow(0 0 15px #808080)
+            brightness(1.3);
+}
     </style>
 </head>
 <body>
@@ -768,6 +827,7 @@
                         <select id="team1ThemeSelect" onchange="switchTeam1Theme()" style="flex: 1; padding: 4px; border-radius: 5px; border: none; font-size: 12px;">
                             <option value="medieval">⚔️ 중세</option>
                             <option value="mythology">🏛️ 신화</option>
+                               <option value="future">🤖 미래</option>
                         </select>
                     </div>
                 </div>
@@ -779,6 +839,9 @@
                 <div id="team1MythologyUnits" style="display: none;">
                     <!-- 신화 유닛들 -->
                 </div>
+                <div id="team1FutureUnits" style="display: none;">
+    <!-- 미래 유닛들 -->
+</div>
             </div>
 
             <div class="team-setup">
@@ -798,6 +861,7 @@
                         <select id="team2ThemeSelect" onchange="switchTeam2Theme()" style="flex: 1; padding: 4px; border-radius: 5px; border: none; font-size: 12px;">
                             <option value="medieval">⚔️ 중세</option>
                             <option value="mythology">🏛️ 신화</option>
+                            <option value="future">🤖 미래</option>
                         </select>
                     </div>
                 </div>
@@ -809,6 +873,11 @@
                 <div id="team2MythologyUnits" style="display: none;">
                     <!-- 신화 유닛들 -->
                 </div>
+                <div id="team2FutureUnits" style="display: none;">
+    <!-- 미래 유닛들 -->
+</div>
+
+                
             </div>
         </div>
 
@@ -1319,6 +1388,98 @@ let bossMode = {
         <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDPyramidSpecial" value="0" min="0" max="100"></div>
     </div>
 </div>
+
+`;
+
+const futureUnitsHTML = `
+    <div class="unit-config">
+        <div class="unit-header"><strong>🤖 꼬마로봇</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDTinyRobotFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDTinyRobotFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDTinyRobotFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDTinyRobotBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDTinyRobotBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDTinyRobotBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDTinyRobotSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    <div class="unit-config">
+    <div class="unit-header"><strong>🚁 미니 헬리콥터</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDMiniHelicopterFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDMiniHelicopterFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDMiniHelicopterFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDMiniHelicopterBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDMiniHelicopterBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDMiniHelicopterBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDMiniHelicopterSpecial" value="20" min="0" max="100"></div>
+    </div>
+</div>
+<div class="unit-config">
+    <div class="unit-header"><strong>⚙️ 살인 기어</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDKillerGearFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDKillerGearFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDKillerGearFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDKillerGearBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDKillerGearBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDKillerGearBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDKillerGearSpecial" value="20" min="0" max="100"></div>
+    </div>
+</div>
+<div class="unit-config">
+    <div class="unit-header"><strong>🧰 최첨단 정비소</strong></div>
+    <div class="unit-controls">
+        <div class="control-group">
+            <label>전방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDAdvancedRepairShopFrontCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDAdvancedRepairShopFrontCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDAdvancedRepairShopFrontCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>후방</label>
+            <div class="count-control">
+                <button class="count-btn" onclick="changeCount('TEAM_IDAdvancedRepairShopBackCount', -1)">-</button>
+                <input type="number" class="count-input" id="TEAM_IDAdvancedRepairShopBackCount" value="0" min="0" max="10">
+                <button class="count-btn" onclick="changeCount('TEAM_IDAdvancedRepairShopBackCount', 1)">+</button>
+            </div>
+        </div>
+        <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDAdvancedRepairShopSpecial" value="0" min="0" max="100"></div>
+    </div>
+</div>
 `;
 
 
@@ -1328,27 +1489,39 @@ let bossMode = {
         document.getElementById('team1MythologyUnits').innerHTML = mythologyUnitsHTML.replace(/TEAM_ID/g, 'team1');
         document.getElementById('team2MedievalUnits').innerHTML = medievalUnitsHTML.replace(/TEAM_ID/g, 'team2');
         document.getElementById('team2MythologyUnits').innerHTML = mythologyUnitsHTML.replace(/TEAM_ID/g, 'team2');
+        document.getElementById('team1FutureUnits').innerHTML = futureUnitsHTML.replace(/TEAM_ID/g, 'team1');
+document.getElementById('team2FutureUnits').innerHTML = futureUnitsHTML.replace(/TEAM_ID/g, 'team2');
 
-        function switchTeam1Theme() {
-            const theme = document.getElementById('team1ThemeSelect').value;
-            if (theme === 'medieval') {
-                document.getElementById('team1MedievalUnits').style.display = 'block';
-                document.getElementById('team1MythologyUnits').style.display = 'none';
-            } else {
-                document.getElementById('team1MedievalUnits').style.display = 'none';
-                document.getElementById('team1MythologyUnits').style.display = 'block';
-            }
-        }
+       function switchTeam1Theme() {
+    const theme = document.getElementById('team1ThemeSelect').value;
+    if (theme === 'medieval') {
+        document.getElementById('team1MedievalUnits').style.display = 'block';
+        document.getElementById('team1MythologyUnits').style.display = 'none';
+        document.getElementById('team1FutureUnits').style.display = 'none';
+    } else if (theme === 'mythology') {
+        document.getElementById('team1MedievalUnits').style.display = 'none';
+        document.getElementById('team1MythologyUnits').style.display = 'block';
+        document.getElementById('team1FutureUnits').style.display = 'none';
+    } else {
+        document.getElementById('team1MedievalUnits').style.display = 'none';
+        document.getElementById('team1MythologyUnits').style.display = 'none';
+        document.getElementById('team1FutureUnits').style.display = 'block';
+    }
+}
 
         function switchTeam2Theme() {
             const theme = document.getElementById('team2ThemeSelect').value;
             if (theme === 'medieval') {
                 document.getElementById('team2MedievalUnits').style.display = 'block';
                 document.getElementById('team2MythologyUnits').style.display = 'none';
-            } else {
+            } else if (theme === 'mythology') {
                 document.getElementById('team2MedievalUnits').style.display = 'none';
                 document.getElementById('team2MythologyUnits').style.display = 'block';
-            }
+            } else {
+                document.getElementById('team2MedievalUnits').style.display = 'none';
+                document.getElementById('team2MythologyUnits').style.display = 'none';
+                document.getElementById('team2FutureUnits').style.display = 'block';}
+            
         }
 
         function setBattleInterval() {
@@ -1522,7 +1695,7 @@ const unitDescriptions = {
         icon: '🗿',
         name: '골렘',
         theme: '신화',
-        stats: 'HP: 360 | 공격: 80 | 속도: 0.3\n공격속도: 10초 | 사거리: 60',
+        stats: 'HP: 360 | 공격: 80 | 속도: 0.3\n공격속도: 8.5초 | 사거리: 60',
         ability: '느리지만 매우 강력한 공격. 주변 80 범위의 적에게 50% 스플래시 데미지.',
         story: '고대 마법으로 만들어진 바위 거인. 느려도 너무 느리다. 이동속도 0.3은 세상에서 가장 답답한 속도다. 동료들이 "야 빨리와!" 하면 "...가는 중..." 하며 5분 뒤에 도착한다. 한 번은 전투가 끝났는데 골렘이 아직 전장에 도착 안 해서 모두가 기다린 적도 있다. 그러나 한 방에 80 데미지 + 스플래시는 말도 안 되는 화력이다. "기다리면... 내가 이긴다..." 가 좌우명이며, 실제로 한 번 때리면 적이 녹아내린다. HP 360은 부대 내 최고 수준이라 웬만해선 안 죽는다. 문제는 공격속도 10초라 때리기 전에 적이 도망간다는 것. 그럼 "...도망가지 마..." 하며 느리게 쫓아간다. 결국 못 잡는다. 취미는 명상인데, 사실 그냥 가만히 서있는 거다.'
     },
@@ -1555,17 +1728,49 @@ const unitDescriptions = {
     icon: '🐍',
     name: '독사',
     theme: '신화',
-    stats: 'HP: 175 | 공격: 15 | 속도: 1\n공격속도: 3.6초 | 사거리: 240\n스플래시: 60',
-    ability: '스플래시 공격으로 맞은 적은 모래 상태이상(1.5초당 5 데미지 × 3회, 회복 50% 감소). 이미 모래 상태이상인 적 공격 시 효과 없음.',
-    story: '고대 피라미드를 지키던 저주받은 독사. 수천 년 동안 혼자 모래바람과 함께 살았더니 이제 모래가 몸의 일부가 되었다. 공격하면 상대에게 "모래 저주"를 걸어버린다. 1.5초마다 5 데미지씩 3번, 총 15 데미지를 주는데 "이게 진짜 고통이야" 라며 자랑한다. 더 무서운 건 회복 50% 감소 효과. 힐러가 회복해도 절반밖에 안 차서 적들이 "아 짜증나!" 하며 분노한다. 본인은 "모래는 용서가 없어" 라며 쿨한 척하지만, 사실 외로움이 많다. 수천 년 혼자 살아서 대화 스킬이 부족하다. 동료들이 말 걸면 "...뭐?" 하고 어색하게 대답한다. 한 번은 "친구 하자" 는 말에 "친구가 뭐야?" 라고 물어서 모두를 슬프게 했다. 이미 모래 상태이상 걸린 적은 중복 안 되는 이유는 "이미 치명적인데 또 맞으면 죽겠네 아주" 라는 본인의 철학 때문이다.'
+    stats: 'HP: 150 | 공격: 10 | 속도: 1\n공격속도: 4.3초 | 사거리: 200\n스플래시: 60',
+    ability: '스플래시 공격으로 맞은 적은 모래 상태이상(1초당 5 데미지 × 3회, 회복 50% 감소). 이미 모래 상태이상인 적 공격 시 효과 없음.',
+    story: '고대 피라미드를 지키던 저주받은 독사. 수천 년 동안 혼자 모래바람과 함께 살았더니 이제 모래가 몸의 일부가 되었다. 공격하면 상대에게 "모래 저주"를 걸어버린다. 1초마다 5 데미지씩 3번, 총 15 데미지를 주는데 "이게 진짜 고통이야" 라며 자랑한다. 더 무서운 건 회복 50% 감소 효과. 힐러가 회복해도 절반밖에 안 차서 적들이 "아 짜증나!" 하며 분노한다. 본인은 "모래는 용서가 없어" 라며 쿨한 척하지만, 사실 외로움이 많다. 수천 년 혼자 살아서 대화 스킬이 부족하다. 동료들이 말 걸면 "...뭐?" 하고 어색하게 대답한다. 한 번은 "친구 하자" 는 말에 "친구가 뭐야?" 라고 물어서 모두를 슬프게 했다. 이미 모래 상태이상 걸린 적은 중복 안 되는 이유는 "이미 치명적인데 또 맞으면 죽겠네 아주" 라는 본인의 철학 때문이다.'
     },
-    boss: {
+    tinyrobot: {
+    icon: '🤖',
+    name: '꼬마로봇',
+    theme: '미래',
+    stats: 'HP: 110 | 공격: 15 | 속도: 1.5\n공격속도: 3초 | 사거리: 110',
+    ability: '죽기 직전 1회 HP 1로 생존하고 1초간 무적 상태가 됩니다.',
+  story: '2157년 "아동용 놀이 로봇" 으로 제작된 양산형 모델 TN-Y3000. 원래는 아이들과 술래잡기나 하던 평화로운 로봇이었다. 그런데 어느 날 주인 꼬마가 "전쟁 게임 하자!" 며 억지로 전장에 데려왔고, 그때부터 인생(로봇생?)이 꼬였다. "저... 전 전투용이 아닌데요..." 하고 항의했지만 이미 늦었다. 첫 전투에서 HP가 0이 되는 순간 긴급 생존 프로토콜이 자동 발동했고, "어? 나 안 죽네?" 하며 당황했다. 제조사가 "혹시 모를 사고에 대비한 긴급 보호 시스템" 을 몰래 설치해뒀던 것. 1초 무적은 "아이가 다치면 부모가 고소할까봐" 넣은 기능이었는데, 전장에서 엄청난 사기 스킬이 되어버렸다. 문제는 이게 1회용이라는 것. 한 번 쓰면 끝이라 매 전투마다 "이번엔 안 죽어야 해..." 하며 떨고 있다. 동료 로봇들은 "넌 군용 로봇도 아닌데 왜 여기 있냐" 고 놀리지만, 정작 위기 상황에선 "야 꼬마로봇! 네 생존 스킬 남았지?" 하며 의지한다. 본인은 "빨리 집에 가서 블록 놀이나 하고 싶다..." 가 소원이지만, 주인 꼬마가 "로봇 전쟁 게임 재밌어!" 하며 계속 데려온다. 최근 고민은 "생존 스킬 쿨타임이 왜 없지?" 인데, 제조사 매뉴얼을 봤더니 "1회용 긴급 시스템 (재충전 불가)" 라고 적혀있었다. "이거 사기 아니야?!" 하고 항의했지만 아무도 안 들어준다. 취미는 오일 교환하고 볼트 조이기인데, 전쟁 때문에 제대로 관리를 못 해서 삐걱거린다.'},
+
+minihelicopter: {
+    icon: '🚁',
+    name: '미니 헬리콥터',
+    theme: '미래',
+    stats: 'HP: 80 | 공격: 5 | 속도: 1.5\n공격속도: 0.8초 | 사거리: 500',
+    ability: '빠른 공격속도의 원거리 유닛. 궁수보다 사거리가 길고 공격속도가 빠릅니다.',
+    story: '2165년 민간용 택배 드론으로 개발된 MH-100 모델. 원래는 "30분 내 배달" 을 목표로 만들어진 평화로운 헬리콥터였다. 그런데 어느 날 배달 중 전쟁터 한복판에 떨어졌고, 생존을 위해 탑재된 레이저 포인터를 무기로 사용하기 시작했다. "저... 전 택배 드론인데요..." 하고 항의했지만 아무도 안 들어줬다. 공격력 5는 "원래 종이 상자 자르는 용도였어요!" 라는 변명과 함께 설명된다. 하지만 공격속도 0.8초는 진짜 빠르다. "빨리 배달하고 도망가야지!" 정신으로 개발된 속도라서 그렇다. 사거리 500은 "고객 집 찾으려면 멀리 봐야죠" 라는 실용적 이유에서 나왔다. HP 80은 "택배 상자 몇 개 맞으면 고장나요" 수준이라 전투엔 약하다. 동료들은 "너 그냥 택배나 해" 라고 놀리지만, 정작 빠른 공격으로 적을 견제하는 건 인정한다. 최근 고민은 "배터리가 30분밖에 안 가는데 전투는 왜 이렇게 길지?" 이다. 취미는 하늘에서 지도 보기인데, 전쟁 중에도 "여기 맛집 있네" 하며 한가하게 구경한다.'
+},
+killergear: {
+    icon: '⚙️',
+    name: '살인 기어',
+    theme: '미래',
+    stats: 'HP: 275 | 공격: 2→4 | 속도: 2\n공격속도: 0.2초 | 사거리: 60',
+    ability: '죽기 직전 1회 HP 1로 생존하고 4초간 무적 + 넉백. 생존 후 공격력 2배 증가.',
+    story: '2171년 "자동화 공장 시스템" 으로 개발된 KG-7 모델. 원래는 컨베이어 벨트 위에서 부품 조립만 하던 평화로운 기계였다. 그런데 공장이 전쟁에 징발되면서 "전투용 기어"로 강제 개조되었다. "저 나사 조이는 기계인데요..." 하고 항의했지만 이미 늦었다. HP 175는 "공장 기계라 튼튼해요" 라는 자부심에서 나왔고, 공격력 2는 "원래 부품 밀어내는 힘이에요" 수준이다. 공격속도 0.2초는 "1분에 300개 조립했던" 공장 시절 능력이 그대로 남아있어서 엄청 빠르다. 사거리 60은 "팔이 짧아요..." 라는 슬픈 현실. 하지만 진짜 사기는 죽기 직전 발동하는 "긴급 재가동 프로토콜"이다. HP 1로 살아나면서 4초 무적 + 주변을 밀어내고, 공격력이 4로 2배 상승한다. "화났어요! 이제 진짜 해요!" 모드 돌입. 동료들은 "쟤 죽을 뻔하면 더 세지는데?" 하며 신기해한다. 문제는 이게 1회용이라 한 번 쓰면 끝이라는 것. "두 번은 못 해요... 기계도 한계가 있어요..." 최근 고민은 "재가동 후 오일이 새는데 괜찮나?" 이다.'
+},
+advancedrepairshop: {
+    icon: '🧰',
+    name: '최첨단 정비소',
+    theme: '미래',
+    stats: 'HP: 200 | 공격: 5 | 속도: 0.1\n공격속도: 11초 | 사거리: 600',
+    ability: '8초마다 체력 비율이 가장 낮은 아군 1명을 자신 앞으로 이동시키고 회복 (미래 유닛: 50%, 다른 유닛: 30%). 회복 후 6초간 공격력 2배 버프 부여.',
+    story: '2178년 "전장 자동 정비 시스템" AS-900 모델. 원래는 우주 정거장에서 우주선을 수리하던 AI 로봇이었다. "고장난 건 고쳐야지" 가 유일한 프로그래밍이었는데, 어느 날 전쟁터로 잘못 배송되었다. "여기... 우주 정거장 아닌데요?" 하고 항의했지만 이미 늦었다. 배송 취소는 불가능했다. 할 수 없이 "고장난 유닛 = 체력 낮은 유닛" 으로 재정의하고 일을 시작했다. 체력 비율 가장 낮은 아군을 강제로 끌고 와서 "정비 시작합니다~" 하며 수리한다. 미래 유닛은 50% 회복하지만 다른 시대 유닛은 30%만 회복되는데, "고대 기술은 매뉴얼이 없어서..." 라며 변명한다. 수리 후 6초간 공격력 2배 버프를 주는 건 "최적화 패치"라고 부르지만, 사실 그냥 기름 좀 쳐바른 거다. 이동속도 0.1로 극도로 느린 이유는 "정비소는 움직이는 게 아니라 기다리는 겁니다" 라는 철학 때문. 사거리 600으로 멀리서도 "야 너 고장났어, 이리 와" 하고 부를 수 있다. 2대 이상 배치하면 서로 "내가 먼저 수리한다", "아니 내가" 하며 싸워서 아무 일도 안 하는데, 제조사 매뉴얼에 "정비소는 1대만 운용하시오. 2대 이상은 관할권 분쟁으로 작동 불가" 라고 적혀있다. 최근 고민은 "동굴이랑 천사는 왜 안 고쳐지지?" 인데, AI가 "생명체와 마법 구조물은 정비 대상이 아닙니다" 라고 판단했기 때문이다. 취미는 부품 정리인데, 전투 중에도 "이 나사 어디 갔지?" 하며 찾는다.'
+},
+  boss: {
         icon: '💀',
         name: '보스',
         theme: '보스',
-        stats: 'HP: 750 | 공격: 120 | 속도: 0.7\n공격속도: 4초 | 사거리: 150\n스플래시 범위: 100',
-        ability: '강력한 공격과 스플래시 데미지. 매 라운드 별 체력이 10씩 증가.',
-        story: '라운드마다 강해지는 최종 보스. 정확한 정체는 불명이지만, 소문에 의하면 "게임 밸런스를 조정하는 존재" 라고 한다. "너희가 라운드 몇까지 가나 볼까?" 가 입버릇이며, 매 라운드마다 HP가 10씩 증가한다. 1라운드엔 750이지만 10라운드면 840이 된다. 공격력 120은 웬만한 유닛을 한 방에 보낼 수 있는 사기 수준이고, 스플래시 범위 100으로 뭉쳐있는 적들을 쓸어버린다. 사탄도 못 빙의시키는 위엄을 가졌는데, "내가 보스인데 빙의 당해? 말이 돼?" 라며 웃는다. 실제로 사탄이 빙의 시도하면 "크기 제한 있잖아~" 하며 놀린다. 동료 보스들 모임에서는 "나 10라운드까지 본 적 있어" 하며 자랑하지만, 사실 대부분 플레이어가 5라운드에서 포기한다는 게 비밀이다.'
+        stats: 'HP: 750 | 공격: 120 | 속도: 0.7\n공격속도: 4초 | 사거리: 150\n',
+        ability: '강력한 공격 보유. 매 라운드 별 체력이 25씩 증가.',
+        story: '라운드마다 강해지는 최종 보스. 정확한 정체는 불명이지만, 소문에 의하면 "게임 밸런스를 조정하는 존재" 라고 한다. "너희가 라운드 몇까지 가나 볼까?" 가 입버릇이며, 매 라운드마다 HP가 25씩 증가한다. 1라운드엔 750이지만 10라운드면 975이 된다. 공격력 120은 웬만한 유닛을 한 방에 보낼 수 있는 사기 수준이고, 스플래시 범위 100으로 뭉쳐있는 적들을 쓸어버린다. 사탄도 못 빙의시키는 위엄을 가졌는데, "내가 보스인데 빙의 당해? 말이 돼?" 라며 웃는다. 실제로 사탄이 빙의 시도하면 "크기 제한 있잖아~" 하며 놀린다. 동료 보스들 모임에서는 "나 10라운드까지 본 적 있어" 하며 자랑하지만, 사실 대부분 플레이어가 5라운드에서 포기한다는 게 비밀이다.'
     }
 };
 
@@ -1651,6 +1856,10 @@ let unitTypes = ['Knight', 'Archer', 'Snowman', 'Golem', 'Shielder', 'Healer', '
 const themeSelect = document.getElementById(`team${teamId}ThemeSelect`);
 if (themeSelect && themeSelect.value === 'mythology') {
     unitTypes.push('Orc', 'Angel', 'Satan', 'Unicorn', 'Spirit', 'Cloud', 'pyramid'); // Unicorn 추가
+}
+
+if (themeSelect && themeSelect.value === 'future') {
+    unitTypes.push('TinyRobot', 'MiniHelicopter','KillerGear', 'AdvancedRepairShop');
 }
 
             if (totalCount === 0) {
@@ -1872,14 +2081,14 @@ if (themeSelect && themeSelect.value === 'mythology') {
                     this.theme = 'mythology';
                     this.possessionDuration = 3600;
                   } else if (type === 'pyramid') {
-    this.maxHp = 175;
+    this.maxHp = 150;
     this.hp = this.maxHp;
-    this.baseDamage = 15;
-    this.damage = 15;
-    this.baseAttackSpeed = 3600;
-    this.attackSpeed = 3600;
+    this.baseDamage = 10;
+    this.damage = 10;
+    this.baseAttackSpeed = 4300;
+    this.attackSpeed = 4300;
     this.speed = 1;
-    this.range = 240;
+    this.range = 200;
     this.splashRange = 60;
     this.theme = 'mythology';
     this.sandDotDamage = 5;
@@ -1940,6 +2149,56 @@ if (themeSelect && themeSelect.value === 'mythology') {
     this.tauntDuration = 4000;
     this.pushRange = 150;
     this.pushDistance = 400;
+
+    } else if (type === 'minihelicopter') {
+    this.maxHp = 80;
+    this.hp = this.maxHp;
+    this.baseDamage = 5;
+    this.damage = 5;
+    this.baseAttackSpeed = 800;
+    this.attackSpeed = 800;
+    this.speed = 1.5;
+    this.range = 500;
+    this.theme = 'future';
+
+    } else if (type === 'killergear') {
+    this.maxHp = 275;
+    this.hp = this.maxHp;
+    this.baseDamage = 2;
+    this.damage = 2;
+    this.baseAttackSpeed = 200;
+    this.attackSpeed = 200;
+    this.speed = 2;
+    this.range = 60;
+    this.theme = 'future';
+    this.lastStandUsed = false;
+    this.lastStandActive = false;
+
+    } else if (type === 'advancedrepairshop') {
+    this.maxHp = 200;
+    this.hp = this.maxHp;
+    this.baseDamage = 5;
+    this.damage = 5;
+    this.baseAttackSpeed = 11000;
+    this.attackSpeed = 11000;
+    this.speed = 0.1;
+    this.range = 600;
+    this.theme = 'future';
+    this.nextRepairTime = 0;
+    this.repairInterval = 8000;
+       this.repairWaitDuration = 500; 
+    this.targetUnit = null;
+        this.buffDuration = 6000; // ⭐ 추가: 버프 지속시간
+            this.callStartTime = 0;  // ⭐ 추가: 호출 시작 시간
+    this.maxCallDuration = 7000;
+    
+    // ⭐ 추가: 첫 번째만 기능 활성화
+    const teamKey = team === units.team1[0]?.team ? 'team1' : 'team2';
+    // 정비소 카운트 전역 변수 필요 (angelCount처럼)
+    if (!window.repairShopCount) window.repairShopCount = { team1: 0, team2: 0 };
+    repairShopCount[teamKey]++;
+    this.canRepair = repairShopCount[teamKey] <= 1;
+
     
     // 천사처럼 첫 번째만 기능 활성화
 
@@ -1978,14 +2237,26 @@ if (themeSelect && themeSelect.value === 'mythology') {
     this.speed = 2;
     this.range = 80;
     this.theme = 'mythology';
+    } else if (type === 'tinyrobot') {
+    this.maxHp = 110;
+    this.hp = this.maxHp;
+    this.baseDamage = 15;
+    this.damage = 15;
+    this.baseAttackSpeed = 3000;
+    this.attackSpeed = 3000;
+    this.speed = 1.5;
+    this.range = 110;
+    this.theme = 'future';
+    this.hasLastStand = false;
+    this.lastStandUsed = false;
 
                 } else {
                     this.maxHp = 360;
                     this.hp = this.maxHp;
                     this.baseDamage = 80;
                     this.damage = 80;
-                    this.baseAttackSpeed = 10000;
-                    this.attackSpeed = 10000;
+                    this.baseAttackSpeed = 8500;
+                    this.attackSpeed = 8500;
                     this.speed = 0.3;
                     this.range = 60;
                     this.splashRange = 80;
@@ -2063,7 +2334,21 @@ if (themeSelect && themeSelect.value === 'mythology') {
     } else if (this.type === 'cloud') {
     icon = '☁️';
     typeLabel = '구름';
+    } else if (this.type === 'tinyrobot') {
+    icon = '🤖';
+    typeLabel = '꼬마로봇';
+    } else if (this.type === 'minihelicopter') {
+    icon = '🚁';
+    typeLabel = '미니 헬리콥터';
+    } else if (this.type === 'killergear') {
+    icon = '⚙️';
+    typeLabel = '살인 기어';
+    } else if (this.type === 'advancedrepairshop') {
+    icon = '🧰';
+    typeLabel = '정비소';
     } else if (this.type === 'boss') {
+    
+        
     icon = '💀';
     typeLabel = '보스';
 
@@ -2129,9 +2414,20 @@ if (this.type === 'healer' && this.canHeal === false) {
 
                 this.row = 'front';
 
-                return div;
-            }
+             if (this.type === 'boss') {
+    // 보스 크기 1.5배 증가
+    div.style.transform = 'scale(1.5)';
+    div.style.transformOrigin = 'bottom center';
+    
+    // 보스 아바타 크기도 함께 증가
+    const avatarStyle = div.querySelector('.soldier-avatar');
+    if (avatarStyle) {
+        avatarStyle.style.fontSize = '60px';  // 기본 40px → 60px
+    }
+}
 
+return div;
+            }
 
             
 
@@ -2243,6 +2539,93 @@ setTeamColor() {
                     if (this.hp <= 0) {
     this.hp = 0;
     
+// 꼬마로봇 생존 스킬
+if (this.type === 'tinyrobot' && !this.lastStandUsed && this.hp <= 0) {
+    this.hp = 1;
+    this.lastStandUsed = true;
+    this.isInvincible = true;
+    this.invincibleEndTime = Date.now() + 1000;
+    
+    // 방패 아이콘 표시
+    const shieldIcon = document.createElement('div');
+    shieldIcon.className = 'special-indicator';
+    shieldIcon.textContent = '🛡️';
+    shieldIcon.style.fontSize = '24px';
+    this.element.appendChild(shieldIcon);
+    setTimeout(() => shieldIcon.remove(), 1000);
+    
+    addLog(`${this.team} 꼬마로봇이 생존 스킬 발동! (1초 무적)`, true);
+    this.updateDisplay();
+    return; // 사망 처리하지 않음
+}
+
+// 살인 기어 생존 스킬
+if (this.type === 'killergear' && !this.lastStandUsed && this.hp <= 0) {
+    this.hp = 1;
+    this.lastStandUsed = true;
+    this.isInvincible = true;
+    this.invincibleEndTime = Date.now() + 4000;
+    this.lastStandActive = true;
+    
+    // 공격력 2배 증가
+    this.damage = 4;
+    this.baseDamage = 4;
+    
+    // 주변 적 넉백
+    const team1Side = document.getElementById('team1-side');
+    const team2Side = document.getElementById('team2-side');
+    if (team1Side && team2Side) {
+        const team1Rect = team1Side.getBoundingClientRect();
+        const team2Rect = team2Side.getBoundingClientRect();
+        
+        const myInTeam1 = units.team1.includes(this);
+        const myRect = myInTeam1 ? team1Rect : team2Rect;
+        const myAbsX = myRect.left + this.x;
+        const myAbsY = myRect.top + this.y;
+        
+        const enemies = this.team === units.team1[0].team ? units.team2 : units.team1;
+        const enemyRect = myInTeam1 ? team2Rect : team1Rect;
+        const enemySide = myInTeam1 ? team2Side : team1Side;
+        
+        enemies.forEach(enemy => {
+            if (enemy.alive) {
+                const enemyAbsX = enemyRect.left + enemy.x;
+                const enemyAbsY = enemyRect.top + enemy.y;
+                const dist = Math.sqrt((enemyAbsX - myAbsX) ** 2 + (enemyAbsY - myAbsY) ** 2);
+                
+                if (dist <= 150) {
+                    const pushAmount = 100;
+                    if (myInTeam1) {
+                        enemy.x = Math.min(enemy.x + pushAmount, enemySide.offsetWidth - 40);
+                    } else {
+                        enemy.x = Math.max(enemy.x - pushAmount, 40);
+                    }
+                    enemy.element.style.transform = `translate(${enemy.x}px, ${enemy.y}px)`;
+                }
+            }
+        });
+    }
+    
+    // 방패 아이콘 표시
+    const shieldIcon = document.createElement('div');
+    shieldIcon.className = 'special-indicator';
+    shieldIcon.textContent = '🛡️';
+    shieldIcon.style.fontSize = '24px';
+    this.element.appendChild(shieldIcon);
+    setTimeout(() => shieldIcon.remove(), 1000);
+    
+    // ⭐ 기어 이모지에 빨간색 글로우 효과 추가
+    const avatar = this.element.querySelector('.soldier-avatar');
+    if (avatar) {
+        avatar.style.filter = 'drop-shadow(0 0 8px #ff0000) drop-shadow(0 0 16px #ff4444)';
+        avatar.style.animation = 'gear-glow 0.6s ease-out';
+    }
+    
+    addLog(`${this.team} 살인 기어가 생존 스킬 발동! (4초 무적, 공격력 2→4)`, true);
+    this.updateDisplay();
+    return;
+}
+
     // 정령 분열 로직
     if (this.type === 'spirit' || this.type === 'fairy') {
         const spawnType = this.type === 'spirit' ? 'fairy' : 'butterfly';
@@ -2315,7 +2698,7 @@ attack(target) {
         return;
     }
 
-           if (this.type === 'healer') {
+  if (this.type === 'healer') {
     // 능력이 비활성화되어 있으면 힐 불가
     if (!this.canHeal) {
         return;
@@ -2323,24 +2706,24 @@ attack(target) {
     
     if (now < this.nextHealTime) return;
     const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
-allies.forEach(a => {
-    if (a.alive && a.type !== 'cave') {
-        let healMultiplier = 1.0;
-        if (a.theme && a.theme !== 'medieval') {
-            healMultiplier = 0.1;
+    allies.forEach(a => {
+        if (a.alive && a.type !== 'cave' && a.hp > 1) {  // ⭐ a.hp > 1 조건 추가
+            let healMultiplier = 1.0;
+            if (a.theme && a.theme !== 'medieval') {
+                healMultiplier = 0.1;
+            }
+            
+            // 모래 상태이상 시 회복량 절반
+            if (a.sandDebuff && a.sandDebuff.active) {
+                healMultiplier *= a.sandDebuff.healReduction;
+            }
+            
+            const healAmount = Math.floor(a.maxHp * 0.2 * healMultiplier);
+            a.hp = Math.min(a.maxHp, a.hp + healAmount);
+            a.updateDisplay();
+            a.flashHealthBar();
         }
-        
-        // 모래 상태이상 시 회복량 절반
-        if (a.sandDebuff && a.sandDebuff.active) {
-            healMultiplier *= a.sandDebuff.healReduction;
-        }
-        
-        const healAmount = Math.floor(a.maxHp * 0.2 * healMultiplier);
-        a.hp = Math.min(a.maxHp, a.hp + healAmount);
-        a.updateDisplay();
-        a.flashHealthBar();
-    }
-});
+    });
     addLog(`${this.team} 힐러가 아군을 회복했습니다!`, true);
     this.nextHealTime = now + this.healInterval;
     return;
@@ -2368,7 +2751,186 @@ if (this.type === 'tree') {
     return;
 }
 
+if (this.type === 'advancedrepairshop') {
+    if (!this.canRepair) {
+        return;
+    }
 
+    if (this.nextRepairTime === 0) {
+        this.nextRepairTime = now + this.repairInterval;
+        return;
+    }
+    
+    // ⭐ 추가: 호출 시간 초과 체크 (8초)
+    if (this.isRepairing && this.callStartTime > 0 && now - this.callStartTime > this.maxCallDuration) {
+        addLog(`⚠️ ${this.team} 정비소: 타겟이 7초 내에 도착하지 못해 호출 취소`, false);
+        this.targetUnit = null;
+        this.isRepairing = false;
+        this.repairStartTime = 0;
+        this.callStartTime = 0;
+        this.nextRepairTime = now + this.repairInterval;
+        return;
+    }
+    
+    // 이미 타겟이 있고 수리 중이면
+    if (this.targetUnit && this.targetUnit.alive && this.isRepairing) {
+        const team1Side = document.getElementById('team1-side');
+        const team2Side = document.getElementById('team2-side');
+        const team1Rect = team1Side.getBoundingClientRect();
+        const team2Rect = team2Side.getBoundingClientRect();
+        
+        const repairShopInTeam1 = units.team1.includes(this);
+        const targetInTeam1 = units.team1.includes(this.targetUnit);
+        
+        const repairShopAbsX = (repairShopInTeam1 ? team1Rect.left : team2Rect.left) + this.x;
+        const repairShopAbsY = (repairShopInTeam1 ? team1Rect.top : team2Rect.top) + this.y;
+        const targetAbsX = (targetInTeam1 ? team1Rect.left : team2Rect.left) + this.targetUnit.x;
+        const targetAbsY = (targetInTeam1 ? team1Rect.top : team2Rect.top) + this.targetUnit.y;
+        
+        const distance = Math.sqrt((targetAbsX - repairShopAbsX) ** 2 + (targetAbsY - repairShopAbsY) ** 2);
+        
+        // 타겟이 도착했는지 확인 (80px 이내)
+        if (distance <= 80) {
+            // 2초 대기 시작
+            if (this.repairStartTime === 0) {
+                this.repairStartTime = now;
+                addLog(`${this.team} 정비소: 수리 준비 중... (0.5초)`, false);
+            }
+            
+            // 0.5초 지났으면 회복
+            if (now >= this.repairStartTime + this.repairWaitDuration) {
+                const isFutureTheme = this.targetUnit.theme === 'future';
+                const healMultiplier = isFutureTheme ? 0.5 : 0.3;
+                const healAmount = Math.floor(this.targetUnit.maxHp * healMultiplier);
+                
+                this.targetUnit.hp = Math.min(this.targetUnit.maxHp, this.targetUnit.hp + healAmount);
+                this.targetUnit.updateDisplay();
+                this.targetUnit.flashHealthBar();
+
+                // 공격력 2배 버프 적용
+                if (!this.targetUnit.originalDamageBeforeBuff) {
+                    this.targetUnit.originalDamageBeforeBuff = this.targetUnit.damage;
+                }
+                this.targetUnit.damage = this.targetUnit.baseDamage * 2;
+                this.targetUnit.buffEndTime = Date.now() + this.buffDuration;
+
+                // 회색 이펙트
+                const buffIcon = document.createElement('div');
+                buffIcon.className = 'special-indicator';
+                buffIcon.textContent = '⚙️';
+                buffIcon.style.color = '#888';
+                this.targetUnit.element.appendChild(buffIcon);
+                this.targetUnit.element.classList.add('repair-buff');
+                setTimeout(() => buffIcon.remove(), 1000);
+                
+                const targetLabel = this.targetUnit.type === 'knight' ? '기사' : 
+                                    this.targetUnit.type === 'archer' ? '궁수' : 
+                                    this.targetUnit.type === 'tinyrobot' ? '꼬마로봇' :
+                                    this.targetUnit.type === 'minihelicopter' ? '미니 헬리콥터' :
+                                    this.targetUnit.type === 'killergear' ? '살인 기어' :
+                                    this.targetUnit.type;
+                
+                const healTypeText = isFutureTheme ? '(50% 회복)' : '(30% 회복)';
+                addLog(`${this.team} 정비소가 ${targetLabel}을(를) 회복! ${healTypeText} (+${healAmount})`, true);
+                
+                // 수리 완료, 초기화
+                this.targetUnit = null;
+                this.isRepairing = false;
+                this.repairStartTime = 0;
+                this.callStartTime = 0;  // ⭐ 추가
+                this.nextRepairTime = now + this.repairInterval;
+            }
+        } else {
+            // ⭐ 추가: 거리가 너무 멀면 (1000px 이상) 강제로 순간이동
+            if (distance > 1000) {
+                addLog(`⚠️ ${this.team} 정비소: 타겟이 너무 멀어 강제 이동`, false);
+                
+                // 정비소 바로 앞으로 순간이동
+                const targetSide = targetInTeam1 ? team1Side : team2Side;
+                if (repairShopInTeam1 === targetInTeam1) {
+                    // 같은 팀이면 정비소 앞으로
+                    this.targetUnit.x = this.x + (repairShopInTeam1 ? 60 : -60);
+                    this.targetUnit.y = this.y;
+                } else {
+                    // 다른 side에 있으면 (빙의 등) 계산 필요
+                    this.targetUnit.x = Math.max(40, Math.min(targetSide.offsetWidth - 40, this.x));
+                    this.targetUnit.y = this.y;
+                }
+                this.targetUnit.element.style.transform = `translate(${this.targetUnit.x}px, ${this.targetUnit.y}px)`;
+            } else {
+                // 아직 거리가 멀면 계속 이동
+                const dx = repairShopAbsX - targetAbsX;
+                const dy = repairShopAbsY - targetAbsY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist > 0) {
+                    // ⭐ 수정: 이동 속도 3배 증가 (빠르게 오도록)
+                    const moveX = (dx / dist) * this.targetUnit.speed * 1;
+                    const moveY = (dy / dist) * this.targetUnit.speed * 1;
+                    
+                    this.targetUnit.x += moveX;
+                    this.targetUnit.y += moveY;
+                    this.targetUnit.element.style.transform = `translate(${this.targetUnit.x}px, ${this.targetUnit.y}px)`;
+                    this.targetUnit.element.classList.add('moving');
+                }
+            }
+        }
+        return;
+    }
+    
+    // 새로운 타겟 찾기
+    if (now >= this.nextRepairTime && !this.isRepairing) {
+        const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
+        const enemies = this.team === units.team1[0].team ? units.team2 : units.team1;
+        
+        const aliveAllies = allies.filter(a => {
+            if (!a.alive) return false;
+            if (a.type === 'advancedrepairshop' || a.type === 'cave' || a.type === 'angel' || a.type === 'healer') return false;
+            if (a.hp <= 1) return false;
+            
+            // 나무 어그로 체크
+            let isTaunted = false;
+            enemies.forEach(enemy => {
+                if (enemy.type === 'tree' && enemy.tauntedTarget === a && enemy.alive) {
+                    isTaunted = true;
+                }
+            });
+            if (isTaunted) return false;
+            
+            return true;
+        });
+        
+        if (aliveAllies.length > 0) {
+            // 체력 비율이 가장 낮은 유닛 찾기
+            let lowestHpRatioUnit = aliveAllies[0];
+            let lowestRatio = aliveAllies[0].hp / aliveAllies[0].maxHp;
+            
+            aliveAllies.forEach(ally => {
+                const ratio = ally.hp / ally.maxHp;
+                if (ratio < lowestRatio) {
+                    lowestRatio = ratio;
+                    lowestHpRatioUnit = ally;
+                }
+            });
+            
+            // 타겟 설정
+            this.targetUnit = lowestHpRatioUnit;
+            this.isRepairing = true;
+            this.repairStartTime = 0;
+            this.callStartTime = now;  // ⭐ 추가: 호출 시작 시간 기록
+            
+            const targetLabel = this.targetUnit.type === 'knight' ? '기사' : 
+                                this.targetUnit.type === 'archer' ? '궁수' : 
+                                this.targetUnit.type === 'tinyrobot' ? '꼬마로봇' :
+                                this.targetUnit.type === 'minihelicopter' ? '미니 헬리콥터' :
+                                this.targetUnit.type === 'killergear' ? '살인 기어' :
+                                this.targetUnit.type;
+            
+            addLog(`${this.team} 정비소가 ${targetLabel}을(를) 호출했습니다!`, true);
+        }
+    }
+    return;
+}
 
                 if (this.type === 'shielder') {
                     if (!this.isInvincible && now >= (this.nextShieldTime || 0)) {
@@ -2433,6 +2995,10 @@ if (this.type === 'tree') {
                   this.spawnType === 'fairy' ? '요정' :
                   this.spawnType === 'butterfly' ? '나비' :
                   this.spawnType === 'pyramid' ? '독사' : '알 수 없음';
+                  this.spawnType === 'tinyrobot' ? '꼬마로봇' :
+                  this.spawnType === 'minihelicopter' ? '미니 헬리콥터' :
+                  this.spawnType === 'killergear' ? '살인 기어' : 
+                  this.spawnType === 'advancedrepairshop' ? '정비소' :
 addLog(`${this.team} 동굴이 ${typeLabel}을(를) 소환했습니다! (체력 -${this.spawnCost})`, true);
                         }
                         this.nextSpawnTime = now + this.spawnInterval;
@@ -2453,6 +3019,11 @@ addLog(`${this.team} 동굴이 ${typeLabel}을(를) 소환했습니다! (체력 
         if (this.canRevive && this.recentDeaths && this.recentDeaths.length > 0 && this.reviveCount > 0) {
             const death = this.recentDeaths.shift();
             const deadUnit = death.unit;
+
+               if (deadUnit.hp <= 1) {
+        this.nextReviveCheckTime = now + this.reviveCheckInterval;
+        return;
+    }
             
             if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit') {
                 this.nextReviveCheckTime = now + this.reviveCheckInterval;
@@ -2697,7 +3268,7 @@ if (this.type === 'satan' && target.alive && !target.isPossessed && target.type 
     
     // ⭐ 보스는 빙의 불가, 대신 강력한 공격
     if (target.type === 'boss') {
-        let damage = 55 * damageMultiplier;  // 10 → 55
+        let damage = 70 * damageMultiplier;  // 10 → 55
         target.takeDamage(damage);
         addLog(`${this.team} 사탄이 보스를 공격! 보스는 빙의시킬 수 없습니다, 그러나 ${Math.floor(damage)}로 데미지 상승!)`, true);
         this.nextAttackTime = now + this.attackSpeed;
@@ -3008,8 +3579,8 @@ function closeBossMode() {
 function generateCards(count) {
     const allUnitTypes = [
         'knight', 'archer', 'snowman', 'shielder', 
-        'hammerman', 'bomberman', 'ninja', 'cave',
-        'orc', 'cloud', 'satan', 'golem', 'unicorn', 'spirit', 'pyramid',
+        'hammerman', 'bomberman', 'ninja',
+        'orc', 'cloud', 'satan', 'golem', 'unicorn', 'spirit', 'pyramid','tinyrobot','minihelicopter','killergear',
     ];
     
     bossMode.currentCards = [];
@@ -3160,7 +3731,7 @@ const boss = new Unit('boss', bossTeam, 1, 0, 0);
 boss.row = 'front';
 
 // 라운드마다 체력 10 증가
-boss.maxHp = 750 + ((bossMode.round - 1) * 10);
+boss.maxHp = 750 + ((bossMode.round - 1) * 25);
 boss.hp = boss.maxHp;
 
 // ★ 이 부분을 추가/수정:
@@ -3184,7 +3755,7 @@ units.team2.push(boss);
 
 // 보스전 승리 처리 (endBattle 함수 수정 필요)
 
-        function startBattle() {
+    function startBattle() {
             if (battleActive) return;
 
             // 힐러 개수 체크 및 능력 활성화 (처음 3개만)
@@ -3197,6 +3768,7 @@ units.team2.push(boss);
             battleActive = true;
 
                 angelCount = { team1: 0, team2: 0 };
+                window.repairShopCount = { team1: 0, team2: 0 };  // ← 이 줄 추가!
 
             const team1Name = document.getElementById('team1Name').value;
             const team2Name = document.getElementById('team2Name').value;
@@ -3219,7 +3791,12 @@ units.team2.push(boss);
       { name: 'Spirit' },
       { name: 'Cloud' },
       { name: 'Tree' } ,
-      { name: 'Pyramid' }
+      { name: 'Pyramid' },
+      { name: 'TinyRobot' },
+      { name: 'MiniHelicopter' },
+        { name: 'KillerGear' },
+         { name: 'AdvancedRepairShop' },
+         
 ];
 
             for (let i = 0; i < 2; i++) {
@@ -3370,6 +3947,9 @@ renderBattlefield();
                 unit.element.classList.add('team2');
                 unit.setTeamColor();
 
+                // 힐러/나무 처리하는 부분 옆에 추가
+// 힐러/나무 처리하는 부분 옆에 추가
+
 // 유니콘 차지 시스템 끝난 직후
 
 
@@ -3433,6 +4013,22 @@ renderBattlefield();
             healthBar.parentNode.insertBefore(disabledText, healthBar.nextSibling);
         }
     }
+
+    if (unit.type === 'advancedrepairshop' && !unit.canRepair) {
+    const avatar = unit.element.querySelector('.soldier-avatar');
+    if (avatar) {
+        avatar.style.filter = 'invert(1)';
+        avatar.style.opacity = '0.6';
+    }
+    const healthBar = unit.element.querySelector('.health-bar');
+    if (healthBar && !unit.element.querySelector('.disabled-text')) {
+        const disabledText = document.createElement('div');
+        disabledText.className = 'disabled-text';
+        disabledText.textContent = '기능 불가';
+        disabledText.style.cssText = 'color: #ff4444; font-size: 10px; font-weight: bold; margin-top: 2px; text-align: center;';
+        healthBar.parentNode.insertBefore(disabledText, healthBar.nextSibling);
+    }
+}
     // ⭐ 나무 처리 추가
     if (unit.type === 'tree' && !unit.canTaunt) {
         const avatar = unit.element.querySelector('.soldier-avatar');
@@ -3454,6 +4050,21 @@ renderBattlefield();
         }
         function battleLoop() {
             const now = Date.now();
+
+            [...units.team1, ...units.team2].forEach(u => {
+    // 정비소 버프 해제
+    if (u.buffEndTime && now >= u.buffEndTime) {
+        u.damage = u.baseDamage;  // 원래 공격력으로 복구
+        u.element.classList.remove('repair-buff');  // CSS 클래스 제거
+        
+        // 이펙트 제거
+        const buffIcons = u.element.querySelectorAll('.special-indicator');
+        buffIcons.forEach(icon => icon.remove());
+        
+        delete u.buffEndTime;
+        addLog(`${u.team} ${u.type}의 정비소 버프가 종료되었습니다.`, false);
+    }
+});
 
                  [...units.team1, ...units.team2].forEach(u => {
      // battleLoop의 빙의 해제 부분을 이렇게 수정:
@@ -3528,8 +4139,22 @@ u.isInvincible = false;
 u.updateDisplay();
 
 
-
+// 정비소 버프 해제
+// 정비소 버프 해제 부분에 추가
+if (u.buffEndTime && now >= u.buffEndTime) {
+    u.damage = u.baseDamage;  // ← 이렇게 변경 (baseDamage로 복구)
+    u.element.classList.remove('repair-buff');
     
+    // 이펙트 제거
+    const buffIcons = u.element.querySelectorAll('.special-indicator');
+    buffIcons.forEach(icon => icon.remove());
+    
+    delete u.originalDamageBeforeBuff;
+    delete u.buffEndTime;
+    
+    addLog(`${u.team} ${u.type}의 정비소 버프가 종료되었습니다.`, false);
+}
+
     // 아바타 복구
     const avatar = u.element.querySelector('.soldier-avatar');
     if (avatar) {
@@ -3537,7 +4162,9 @@ u.updateDisplay();
         'knight': '🗡️', 'archer': '🏹', 'snowman': '🐦',
         'healer': '💊', 'shielder': '🛡️', 'bomberman': '💣',
         'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
-        'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄',   'spirit': '✨', 'fairy': '🧚‍♀️', 'butterfly': '🦋', 'cloud': '☁️', 'pyramid': '🐍'  // 
+        'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄',   'spirit': '✨', 'fairy': '🧚‍♀️', 'butterfly': '🦋', 'cloud': '☁️', 'pyramid': '🐍',
+        'tinyrobot': '🤖', 'minihelicopter': '🚁', 'killergear': '⚙️','advancedrepairshop': '🧰'
+          // 
     };
         avatar.textContent = icons[u.originalType] || '🗡️';
         avatar.style.filter = '';
@@ -3569,6 +4196,19 @@ u.updateDisplay();
                     u.flashHealthBar();
                     u.shieldEndTime = 0;
                 }
+
+                if (u.type === 'tinyrobot' && u.isInvincible && u.invincibleEndTime && now >= u.invincibleEndTime) {
+    u.isInvincible = false;
+    u.element.classList.remove('invincible');
+    addLog(`${u.team} 꼬마로봇의 무적이 종료되었습니다.`, false);
+}
+
+// 살인 기어 무적 해제
+if (u.type === 'killergear' && u.isInvincible && u.invincibleEndTime && now >= u.invincibleEndTime) {
+    u.isInvincible = false;
+    u.element.classList.remove('invincible');
+    addLog(`${u.team} 살인 기어의 무적이 종료되었습니다.`, false);
+}
 // 유니콘 차지 시스템
 [...units.team1, ...units.team2].forEach(u => {
     if (u.type === 'unicorn' && u.alive) {
@@ -3708,6 +4348,18 @@ actualTeam1.forEach(unit => {
     let closestTarget = null;
     let closestDistance = Infinity;
 
+    // ⭐ 정비소에게 호출당한 유닛은 정비소로만 이동
+    let calledByRepairShop = null;
+    actualTeam1.forEach(ally => {
+        if (ally.type === 'advancedrepairshop' && ally.targetUnit === unit && ally.isRepairing && ally.alive) {
+            calledByRepairShop = ally;
+        }
+    });
+    
+    if (calledByRepairShop) {
+        // 정비소로 이동만 하고 공격 안함
+        return;
+    }
     
     // ⭐ 나무에게 어그로가 끌렸는지 확인
     let tauntedBy = null;
@@ -3728,7 +4380,6 @@ actualTeam1.forEach(unit => {
         const team1Rect = document.getElementById('team1-side').getBoundingClientRect();
         const team2Rect = document.getElementById('team2-side').getBoundingClientRect();
         
-        // ★ 핵심: 유닛이 어느 배열에 속해있는지 확인
         const unitInTeam1Array = units.team1.includes(unit);
         const targetInTeam1Array = units.team1.includes(target);
         
@@ -3754,6 +4405,19 @@ actualTeam2.forEach(unit => {
     let closestTarget = null;
     let closestDistance = Infinity;
 
+    // ⭐ 정비소에게 호출당한 유닛은 정비소로만 이동
+    let calledByRepairShop = null;
+    actualTeam2.forEach(ally => {
+        if (ally.type === 'advancedrepairshop' && ally.targetUnit === unit && ally.isRepairing && ally.alive) {
+            calledByRepairShop = ally;
+        }
+    });
+    
+    if (calledByRepairShop) {
+        // 정비소로 이동만 하고 공격 안함
+        return;
+    }
+
     let tauntedBy = null;
     actualTeam1.forEach(enemy => {
         if (enemy.type === 'tree' && enemy.tauntedTarget === unit && enemy.alive) {
@@ -3772,7 +4436,6 @@ actualTeam2.forEach(unit => {
         const team1Rect = document.getElementById('team1-side').getBoundingClientRect();
         const team2Rect = document.getElementById('team2-side').getBoundingClientRect();
         
-        // ★ 핵심: 유닛이 어느 배열에 속해있는지 확인
         const unitInTeam1Array = units.team1.includes(unit);
         const targetInTeam1Array = units.team1.includes(target);
         
