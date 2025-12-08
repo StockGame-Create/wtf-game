@@ -1514,8 +1514,8 @@ const unitDescriptions = {
         icon: '😈',
         name: '사탄',
         theme: '신화',
-        stats: 'HP: 150 | 공격: 10 | 속도: 1.5\n공격속도: 8초 | 사거리: 340',
-        ability: '적을 빙의시켜 4초간 아군으로 만듭니다. 빙의 시 주변 적 +10 데미지. 해제 시 추가 30 데미지. (단, 보스를 빙의 시킬 수 없습니다.)',
+        stats: 'HP: 135 | 공격: 10 | 속도: 1.5\n공격속도: 10초 | 사거리: 280',
+        ability: '적을 빙의시켜 3.6초간 아군으로 만듭니다. 빙의 시 주변 적 +10 데미지. 해제 시 추가 30 데미지. (단, 보스를 빙의 시킬 수 없습니다.)',
         story: '"네 몸 빌려쓴다!" 지옥에서 온 빙의 전문 악마. 원래 지옥 행정부서에서 서류 작업만 하던 평범한(?) 악마였는데, "이거 재미없어" 하고 지상으로 도망쳤다. 빙의 능력은 우연히 술 마시다가 친구 몸에 들어갔던 경험에서 개발했다. 4초간 적을 아군으로 만드는 능력은 매우 사기적이지만, 정작 본인은 "4초밖에 안 돼? 짧네" 하며 불만이다. 빙의 시 주변 적에게 10 데미지 + 해제 시 30 데미지를 주는데, "이게 내 특제 퇴장 선물이야!" 라며 자랑한다. 단점은 보스급 적은 크기가 커서 빙의가 안 된다는 것. 한 번 보스를 빙의 시도하다가 튕겨나가서 "크기 제한 있었네..." 하며 당황했다.'
     },
     golem: {
@@ -1861,16 +1861,16 @@ if (themeSelect && themeSelect.value === 'mythology') {
     angelCount[teamKey]++;
     this.canRevive = angelCount[teamKey] <= 1;
                 } else if (type === 'satan') {
-                    this.maxHp = 150;
+                    this.maxHp = 135;
                     this.hp = this.maxHp;
                     this.baseDamage = 10;
                     this.damage = 10;
-                    this.baseAttackSpeed = 8000;
-                    this.attackSpeed = 8000;
+                    this.baseAttackSpeed = 10000;
+                    this.attackSpeed = 10000;
                     this.speed = 1.5;
-                    this.range = 340;
+                    this.range = 280;
                     this.theme = 'mythology';
-                    this.possessionDuration = 4000;
+                    this.possessionDuration = 3600;
                   } else if (type === 'pyramid') {
     this.maxHp = 175;
     this.hp = this.maxHp;
@@ -2830,7 +2830,7 @@ enemies.forEach(u => {
     target.damage = 20;
     target.baseAttackSpeed = 2500;
     target.attackSpeed = 2500;
-    target.range = 120;
+    target.range = 60;
     target.speed = 2.5;
     target.possessionEndTime = now + this.possessionDuration;
     target.isInvincible = true;
