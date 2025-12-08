@@ -1775,18 +1775,224 @@ advancedrepairshop: {
         story: '라운드마다 강해지는 최종 보스. 정확한 정체는 불명이지만, 소문에 의하면 "게임 밸런스를 조정하는 존재" 라고 한다. "너희가 라운드 몇까지 가나 볼까?" 가 입버릇이며, 매 라운드마다 HP가 25씩 증가한다. 1라운드엔 750이지만 10라운드면 975이 된다. 공격력 120은 웬만한 유닛을 한 방에 보낼 수 있는 사기 수준이고, 스플래시 범위 100으로 뭉쳐있는 적들을 쓸어버린다. 사탄도 못 빙의시키는 위엄을 가졌는데, "내가 보스인데 빙의 당해? 말이 돼?" 라며 웃는다. 실제로 사탄이 빙의 시도하면 "크기 제한 있잖아~" 하며 놀린다. 동료 보스들 모임에서는 "나 10라운드까지 본 적 있어" 하며 자랑하지만, 사실 대부분 플레이어가 5라운드에서 포기한다는 게 비밀이다.'
     }
 };
+// 기존 openUnitInfo 함수 위에 추가할 코드
 
+const categoryStories = {
+    medieval: {
+        name: '중세',
+        icon: '⚔️',
+        story: `[왕국 기사훈련소 - 평범한 하루]
+
+오전 6시: 알람이 울린다. 신참 기사는 일어난다. "또 기사생활이다..." 
+
+옆 침대의 기사는 이미 일어나 갑옷을 닦고 있다. 3년 차이인데 벌써 철학자가 됐다. "이것도 명예야." 신참은 속으로 생각한다. '내가 미쳤나?'
+
+오전 7시: 훈련장
+궁수가 화살을 쏜다. 100개 중 99개를 맞혔다. "99개면 100% 아니잖아?" 라고 항의했지만, 훈련관은 웃기만 했다. "내일 또 하지."
+
+"진짜 이 일 언제까지..." 궁수가 한숨을 쉰다.
+
+신참 기사가 옆에서 팔굽혀펴기를 한다. "넌 좋겠다 목표가 있어도 되지만, 나는 드래곤도 봤는데 아직도 기초 훈련이야." 궁수가 웃는다. "그래도 난 화살 100개 계속 쏘는데?" "그래서 우리 둘 다 미친 거야."
+
+오전 8시 30분: 식당
+새잡이가 밥을 먹는다. 숟가락질할 때마다 밥이 떨어진다. 옆의 해머맨이 한숨을 쉰다. "그럼 좀 천천히 먹어..." "빨리 먹어야 훈련할 시간이 있지..." 새잡이의 논리는 좋지만, 현실은 밥투성이다.
+
+폭탄병이 병동에서 나온다. "몇 번째야?" "...73번" "아직도?" "이번엔 진짜 다를 줄 알았어..." 의사는 묻지 않는다. 이미 알고 있다.
+
+해머맨이 밥 그릇을 집어 들었다. "오늘도 120m 넉백 연습할까 라고 생각했는데, 어제 팀원을 날려버려서..." 새잡이가 묻는다. "그 사람 괜찮아?" "몇 시간 뒤에 나타났어. 여기서 며칠 떨어진 곳에." 침묵. 해머맨은 우긴다. "내 실력 탓이 아니야!"
+
+오전 10시: 훈련장 - 근접전 구역
+기사와 기사가 맞붙는다. 신참 vs 경험자. 신참은 3초만에 쓰러진다. "이게... 현실이군..." 경험자가 손을 내민다. "내일 또 하자." 내일? 신참은 이미 내일을 생각하지 않기로 결심했다.
+
+쉴더가 방패를 들었다. 100개 중 99개를 테스트했다. "이게 최고의 방패야. 6초마다 2초간 무적이 되거든." 누군가 말한다. "그냥 도망가는 거지?" 쉴더의 얼굴이 굳는다. "아니야, 이게 전략이다!"
+
+닌자가 1:1 대련을 신청한다. 근접 공격력 5. 모두가 웃는다. "이 새끼 진짜..." 그런데 닌자는 죽는 척하고 뒤로 물러난 후 활을 쏜다. 결국 이긴다. "계획대로였어..." 하지만 눈빛은 떨리고 있다. 진짜 죽을 뻔했거든.
+
+오후 12시: 점심시간
+신참 기사가 옆 기사에게 묻는다. "언제부터 이게 일상이 됐어?" 경험자는 대답한다. "3개월 정도? 6개월? 글쎄... 이제 잘 모르겠어." 둘 다 밥을 먹는다. 말이 없다. 하지만 불편하지 않다.
+
+폭탄병이 또 자신의 폭탄에 맞았다. "25 데미지면... 괜찮지. 자존감이 문제지." 해머맨이 웃는다. "근데 넌 2시간 전에도 맞았잖아." "그래도 이번 건 좀 덜 아팠어." 거짓말이다.
+
+오후 2시: 동굴 유닛의 숙소
+동굴은 움직이지 않는다. 이동속도 0.1은 화면을 1시간 움직일 정도다. "왜 안 움직여?" "움직이기 싫어." 간단한 대답이다.
+
+하지만 12초마다 새로운 병사가 나온다. 동굴은 혼잣말을 한다. "얘들이 내 친구야. 혼자 있으니까..." 누군가 듣고 있으면 위로할 것 같지만, 아무도 없다. 동굴은 이미 혼자가 되는 데 익숙하다.
+
+오후 3시 30분: 힐러 집회실
+힐러 3명이 모였다. 그리고 싸운다. "넌 어제 약초를 잘못 골랐어." "아니야, 이 하나가 애매했어." "그래서 내가 맞는 거야!"
+
+한 기사가 관찰자로 들어간다. "혹시 상처가?" "아뇨, 그냥... 이들 둘 다 배울 점이 많아서..." 기사는 나간다. 힐러들의 싸움은 끝나지 않는다. 하지만 이상하게 누군가는 항상 회복된다.
+
+오후 5시: 훈련 마무리
+모두가 피곤해하지만, 누군가는 계속 한다. 닌자는 죽는 척 연습을 한다. "한 번 더... 한 번 더..." 진짜로 죽을 것 같지만, 매번 살아난다. 그게 전부다.
+
+새잡이는 650m 거리의 표적을 맞춘다. 1발. "이 정도면... 맞지?" 다른 누구도 할 수 없는 거리다. 그래서 혼자다. 하지만 필요하다.
+
+저녁 6시: 숙소
+기사들이 갑옷을 닦는다. 신참은 벌써 같은 부분을 30분째 닦고 있다. "언제쯤 실제 전투가 있을까?" 경험자는 쉽게 대답하지 않는다. "글쎄... 아직도 오지 않으면 좋겠어." 신참은 이해할 수 없다. "뭐라고?" "아무 것도 아니야."
+
+밤 10시: 막사
+모두가 자러 간다. 폭탄병은 자기 전에 자신의 폭탄에 또 맞을 꿈을 꾼다. 닌자는 죽지 않는 꿈을 꾼다. 새잡이는 밥을 먹지 않는 꿈을 꾼다.
+
+신참 기사는 생각한다. "내일도 이럴까?"
+
+답은 이미 정해져 있다. 내일도, 모레도, 계속 이럴 것이다.
+
+하지만 이상하게도, 모두가 계속 한다.
+
+왜냐하면, 이게 우리의 일상이니까.`
+    },
+    mythology: {
+        name: '신화',
+        icon: '🏛️',
+        story: `[신성한 산 요새 - 신들의 평범한 날씨]
+
+새벽: 하늘이 밝아온다.
+
+천사 1호가 침대에서 일어난다. 4번 부활시킬 수 있다. 하지만 혼자다. 천사 2호를 만나고 싶지 않다. 왜냐하면 만나면 싸우기 때문이다. "내가 살렸어." "아니 난데?" 이 싸움은 이미 1000번을 넘겼다.
+
+어제는 누군가 죽어서 누가 살릴지 두 천사가 싸웠고, 결국 아무도 안 살렸다. 죽은 오크가 30분 뒤 혼자 살아났다. "그게... 부활이야?"
+
+오전 7시: 산 훈련장
+
+오크가 팔굽혀펴기를 한다. 근육 문화가 자존심이다. "공격력 20, 공격속도 2.5초! 나 강하잖아?" 근데 체력은 110에 불과하다. "체력? 그건 약한 거 아니고 민첩형이야!"
+
+옆에서 구름이 번개를 날린다. "공격력 30이거든?" 오크의 얼굴이 굳는다. "뭐라고?" "너 25잖아? 난 30이야. 이건 수학이야." 오크가 화낸다. "그럼 1:1 해볼까?" "싫아, 난 비행 중이니까." 구름이 하늘로 올라간다. 오크는 여전히 화났지만, 결국 진 거다.
+
+오전 9시: 신화 세계의 카페?
+
+정령이 요정 2마리로 분열되고, 요정이 나비 4마리로 분열된다. 어느 순간부터 이게 자주 일어난다. "우리 4마리가 한 명 때려쓰러뜨렸어!" 감동의 순간. 하지만 원래 정령은 울고 싶다. "우린... 정말... 해냈어..." 작지만, 함께다.
+
+나무가 들어온다. 이동속도 0.05. "오늘도 자리에 앉을까?" 움직이지 않는다. 8초마다 누군가를 끌어 400m 밀어낸다. "난 움직일 필요가 없어. 이게 내 능력이야." 누군가 묻는다. "혼자 괜찮아?" 나무는 대답하지 않는다.
+
+골렘이 들어온다. 어제는 어디 가다가 중간에 멈췄고, 오늘도 계속 간다. 목적지까지 아직 3시간. "30분에 한 바퀴... 언제 목적지에 갈까?" 골렘은 속도를 줄이지 않는다. "계획이 중요해. 목표가 아니라."
+
+오전 11시: 독사의 방
+
+독사는 거울을 본다. "이 모습... 이게 나야?" 수천 년을 혼자 살았다. 피라미드를 지키고, 모래를 날리고, 적을 약하게 했다. 하지만 친구는 없었다.
+
+최근에 누군가와 싸웠다. 결과는 모래 상태이상. 피해자는 3초 동안 15 데미지를 받고, 회복량이 50% 줄었다. "미안해..." 라고 독사가 중얼거렸지만, 아무도 듣지 않았다.
+
+오후 1시: 훈련장 - 중심부
+
+유니콘이 차지를 하고 있다. "차지 1... 차지 2... 차지 3..." 혼잣말로 열심히 센다. 1.5초마다 +1 차지. 최대 6단계까지 간다. 준비 완료. 적을 공격한다. 공격력 85. 스플래시. 깔끔하다. 
+
+그리고 즉시 200m를 후퇴한다. "전략적 이동이야!" 하지만 눈은 떨리고 있다. 진짜로 겁났거든.
+
+오후 3시: 신화 세계의 깊은 곳
+
+사탄이 나타난다. 빙의 전문가다. 정확히는, "네 몸을 내가 쓸게" 라는 존재다. 누군가 물었다. "왜 빙의를 해?" "재밌거든?" 더 깊은 이유는 없다. 아니, 있을지도 모르지만 말하지 않는다.
+
+오크를 빙의시켰다. 오크는 검은 심장이 되고, 오크 능력을 잃고, 사탄의 능력을 얻는다. 3.6초 후, 원래대로 돌아온다. "내가... 뭐했어?" 오크는 기억하지 못한다. 하지만 30 데미지를 받았다. "왜...?"
+
+오후 5시: 신화 요새 원탁
+
+천사들이 모였다. 2명이 아니라 3명이다. 이 상태가 최적이다. 3명 이상은 싸우기 때문이다. 방금 누군가가 죽었다. "내가 살릴게!" "아니 내가!" 싸움이 난다. "아 그럼 아무도 말고!" 결국 아무도 안 살린다. 죽은 자는 30분 뒤에 자동으로 살아난다. "그게... 부활이야?"
+
+저녁 6시: 신화 세계의 숲
+
+정령과 요정과 나비가 뛰어다닌다. 어쩌다 1명에서 4명이 되었다. "우린 절대 죽지 않아." 맞다. 계속 분열할 뿐이다. 하지만 약해진다. 나비 공격력 5, HP 40. 여전히 함께다.
+
+독사가 혼자 앉아있다. 누군가 옆에 앉을까? 기다려 본다. 한 시간, 두 시간... 아무도 안 온다. 하지만 이미 익숙하다.
+
+밤 10시: 하늘의 별
+
+구름이 하늘을 떠다닌다. 한 번은 바람 때문에 팀원을 태웠다. "바람이 심했어..." 라고 변명했지만, 아무도 안 믿었다. 하지만 계속 날아다닌다. 공격력 30은 거짓이 아니니까.
+
+골렘은 여전히 천천히 간다. 오전 7시에 출발한 목표지까지 이제 2시간 50분. "멈추지 말자." 그게 전부다.
+
+밤 12시: 신화 요새
+
+모두가 자러 간다. 천사는 하프를 들고 싶지만, 저녁에 잔뜩 까였으니까 자제한다. 오크는 내일 근육을 자랑할 꿈을 꾼다. 나무는 서 있고, 골렘은 걸어가고, 정령은 분열하고, 독사는 혼자다.
+
+신화 세계도 평범한 일상이다. 
+
+- 천사는 부활을 한다 (싸우지 않으면)
+- 오크는 근육을 자랑한다 (구름에게 진다)
+- 골렘은 느리게 간다 (하지만 멈추지 않는다)
+- 정령은 분열한다 (4마리까지)
+- 나무는 서 있다 (하지만 누군가는 밀쳐낸다)
+- 독사는 혼자다 (하지만 모두를 약하게 한다)
+
+신화도 그냥 일상이야. 신들도 피곤하고, 외로워하고, 싸운다. 단지 우리보다는 오래 살 뿐이다.`
+    }
+};
+
+// openUnitInfo 함수 수정 버전
 function openUnitInfo() {
     const modal = document.getElementById('unitInfoModal');
-    const grid = document.getElementById('unitGrid');
+    const header = modal.querySelector('.unit-info-header');
     
+    // 기존 헤더 뒤에 카테고리 버튼 영역 추가
+    let categoryButtons = modal.querySelector('#categoryButtons');
+    if (!categoryButtons) {
+        categoryButtons = document.createElement('div');
+        categoryButtons.id = 'categoryButtons';
+        categoryButtons.style.cssText = `
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            flex-wrap: wrap;
+        `;
+        header.parentNode.insertBefore(categoryButtons, header.nextSibling);
+    }
+    
+    categoryButtons.innerHTML = `
+        <button class="category-btn" data-category="medieval" style="
+            padding: 10px 20px;
+            background: rgba(200, 100, 50, 0.3);
+            border: 2px solid rgba(200, 100, 50, 0.5);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        ">📖 ⚔️ 중세 세계</button>
+        
+        <button class="category-btn" data-category="mythology" style="
+            padding: 10px 20px;
+            background: rgba(100, 150, 200, 0.3);
+            border: 2px solid rgba(100, 150, 200, 0.5);
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        ">📖 🏛️ 신화 세계</button>
+    `;
+    
+    const btns = categoryButtons.querySelectorAll('.category-btn');
+    btns.forEach(btn => {
+        btn.onmouseover = () => {
+            btn.style.background = btn.getAttribute('data-category') === 'medieval' 
+                ? 'rgba(200, 100, 50, 0.5)' 
+                : 'rgba(100, 150, 200, 0.5)';
+            btn.style.borderColor = btn.getAttribute('data-category') === 'medieval'
+                ? 'rgba(200, 100, 50, 0.8)'
+                : 'rgba(100, 150, 200, 0.8)';
+        };
+        btn.onmouseout = () => {
+            btn.style.background = btn.getAttribute('data-category') === 'medieval'
+                ? 'rgba(200, 100, 50, 0.3)'
+                : 'rgba(100, 150, 200, 0.3)';
+            btn.style.borderColor = btn.getAttribute('data-category') === 'medieval'
+                ? 'rgba(200, 100, 50, 0.5)'
+                : 'rgba(100, 150, 200, 0.5)';
+        };
+        btn.onclick = () => showCategoryStory(btn.getAttribute('data-category'));
+    });
+    
+    const grid = document.getElementById('unitGrid');
     grid.innerHTML = '';
     
     Object.keys(unitDescriptions).forEach(key => {
         const unit = unitDescriptions[key];
         const card = document.createElement('div');
         card.className = 'unit-card';
-      card.onclick = () => showUnitStory(unit);
+        card.onclick = () => showUnitStory(unit);
         card.style.cursor = 'pointer';
         card.innerHTML = `
             <div class="unit-card-header">
@@ -1806,26 +2012,34 @@ function openUnitInfo() {
     modal.classList.add('active');
 }
 
-function showUnitStory(unit) {
+// 범주 스토리 표시 함수
+function showCategoryStory(category) {
+    const categoryData = categoryStories[category];
+    if (!categoryData) return;
+    
     const storyModal = document.createElement('div');
     storyModal.className = 'unit-info-modal active';
+    storyModal.style.zIndex = '10000';
     storyModal.innerHTML = `
-        <div class="unit-info-content" style="max-width: 600px;">
+        <div class="unit-info-content" style="max-width: 900px; max-height: 85vh;">
             <div class="unit-info-header">
-                <h2>${unit.icon} ${unit.name}의 이야기</h2>
-                <button class="close-modal" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+                <h2>${categoryData.icon} ${categoryData.name}의 세계</h2>
+                <button class="close-modal" onclick="this.closest('.unit-info-modal').remove()">×</button>
             </div>
-            <div style="padding: 20px; line-height: 1.8; font-size: 15px; color: #fff;">
-                ${unit.story}
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-                <span class="unit-theme-badge">${unit.theme}</span>
-            </div>
+            <div style="
+                padding: 30px;
+                line-height: 1.8;
+                font-size: 14px;
+                color: #ddd;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                overflow-y: auto;
+                max-height: calc(85vh - 100px);
+            ">${categoryData.story}</div>
         </div>
     `;
     document.body.appendChild(storyModal);
     
-    // 모달 배경 클릭 시 닫기
     storyModal.onclick = (e) => {
         if (e.target === storyModal) {
             storyModal.remove();
