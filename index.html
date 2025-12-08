@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -2666,18 +2665,48 @@ if (this.type === 'killergear' && !this.lastStandUsed && this.hp <= 0) {
                     this.alive = false;
                     this.element.classList.add('dead');
                     
-                    const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
-                    allies.forEach(ally => {
-                        if (ally.type === 'angel' && ally.alive && !ally.isPossessed) {
-                            if (!ally.recentDeaths) ally.recentDeaths = [];
-                            ally.recentDeaths.push({
-                                unit: this,
-                                deathTime: Date.now(),
-                                x: this.x,
-                                y: this.y
-                            });
-                        }
-                    });
+const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
+
+// ⭐ 수정: HP가 1 이상일 때만 부활 정보 저장
+if (this.hp <= 0 && this.alive)  {
+    // HP가 남아있을 때만 부활 가능하도록 등록
+    allies.forEach(ally => {
+        if (ally.type === 'angel' && ally.alive && !ally.isPossessed && ally.canRevive) {
+            if (!ally.recentDeaths) ally.recentDeaths = [];
+            ally.recentDeaths.push({
+                unit: this,
+                deathTime: Date.now(),
+                x: this.x,
+                y: this.y
+            });
+            console.log(`천사가 ${this.type}의 사망 정보 저장 (HP: ${this.hp})`);
+        }
+    });
+}
+
+this.alive = false;
+this.element.classList.add('dead');
+
+// ⭐ 추가: HP가 1 이하라면 부활 불가능 로그
+if (this.hp <= 0) {
+    this.hp = 0;
+    
+    // 사망 처리 전에 부활 정보 저장
+    const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
+    allies.forEach(ally => {
+        if (ally.type === 'angel' && ally.alive && ally.canRevive) {
+            if (!ally.recentDeaths) ally.recentDeaths = [];
+            ally.recentDeaths.push({
+                unit: this,
+                deathTime: Date.now(),
+                x: this.x,
+                y: this.y
+            });
+        }
+    });
+    
+    this.alive = false;  // 그 다음 사망 처리
+}
                     
                     this.deathTimeout = setTimeout(() => {
                         if (this.element && this.element.parentNode) {
@@ -3017,20 +3046,16 @@ addLog(`${this.team} 동굴이 ${typeLabel}을(를) 소환했습니다! (체력 
         }
     } else {
         // 부활 능력이 있는 천사만 부활 시도
-        if (this.canRevive && this.recentDeaths && this.recentDeaths.length > 0 && this.reviveCount > 0) {
-            const death = this.recentDeaths.shift();
-            const deadUnit = death.unit;
+  if (this.canRevive && this.recentDeaths && this.recentDeaths.length > 0 && this.reviveCount > 0) {
+    const death = this.recentDeaths.shift();
+    const deadUnit = death.unit;
 
-               if (deadUnit.hp <= 1) {
+   
+    
+    if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit' || deadUnit.type === 'killergear' || deadUnit.type === 'tinyrobot' || deadUnit.type === 'advancedrepairshop') {
         this.nextReviveCheckTime = now + this.reviveCheckInterval;
         return;
     }
-            
-            if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit') {
-                this.nextReviveCheckTime = now + this.reviveCheckInterval;
-                return;
-            }
-            
             const costToRevive = (deadUnit.theme === 'mythology') ? 1 : 2;
             
             if (costToRevive === 2 && this.reviveCount === 1) {
