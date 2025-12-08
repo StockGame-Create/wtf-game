@@ -1921,14 +1921,17 @@ const categoryStories = {
 // openUnitInfo 함수 수정 버전
 function openUnitInfo() {
     const modal = document.getElementById('unitInfoModal');
+    const grid = document.getElementById('unitGrid');
+    
+    // 기존 헤더 가져오기
     const header = modal.querySelector('.unit-info-header');
     
-    // 기존 헤더 뒤에 카테고리 버튼 영역 추가
-    let categoryButtons = modal.querySelector('#categoryButtons');
-    if (!categoryButtons) {
-        categoryButtons = document.createElement('div');
-        categoryButtons.id = 'categoryButtons';
-        categoryButtons.style.cssText = `
+    // 카테고리 버튼 컨테이너 생성 (기존에 없으면)
+    let categoryBtnContainer = modal.querySelector('#categoryButtonContainer');
+    if (!categoryBtnContainer) {
+        categoryBtnContainer = document.createElement('div');
+        categoryBtnContainer.id = 'categoryButtonContainer';
+        categoryBtnContainer.style.cssText = `
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
@@ -1936,58 +1939,44 @@ function openUnitInfo() {
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
             flex-wrap: wrap;
+            justify-content: center;
         `;
-        header.parentNode.insertBefore(categoryButtons, header.nextSibling);
+        header.parentNode.insertBefore(categoryBtnContainer, header.nextSibling);
     }
     
-    categoryButtons.innerHTML = `
-        <button class="category-btn" data-category="medieval" style="
-            padding: 10px 20px;
-            background: rgba(200, 100, 50, 0.3);
-            border: 2px solid rgba(200, 100, 50, 0.5);
+    categoryBtnContainer.innerHTML = `
+        <button class="category-story-btn" onclick="showCategoryStory('medieval')" style="
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(200, 100, 50, 0.4), rgba(200, 80, 40, 0.3));
+            border: 2px solid rgba(200, 100, 50, 0.6);
             color: #fff;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
             transition: all 0.3s;
-        ">📖 ⚔️ 중세 세계</button>
+        " onmouseover="this.style.background='linear-gradient(135deg, rgba(200, 100, 50, 0.6), rgba(200, 80, 40, 0.5))'; this.style.borderColor='rgba(200, 100, 50, 0.9)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(200, 100, 50, 0.4), rgba(200, 80, 40, 0.3))'; this.style.borderColor='rgba(200, 100, 50, 0.6)'">
+            📖 ⚔️ 중세 세계 이야기
+        </button>
         
-        <button class="category-btn" data-category="mythology" style="
-            padding: 10px 20px;
-            background: rgba(100, 150, 200, 0.3);
-            border: 2px solid rgba(100, 150, 200, 0.5);
+        <button class="category-story-btn" onclick="showCategoryStory('mythology')" style="
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(100, 150, 200, 0.4), rgba(80, 140, 200, 0.3));
+            border: 2px solid rgba(100, 150, 200, 0.6);
             color: #fff;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
             transition: all 0.3s;
-        ">📖 🏛️ 신화 세계</button>
+        " onmouseover="this.style.background='linear-gradient(135deg, rgba(100, 150, 200, 0.6), rgba(80, 140, 200, 0.5))'; this.style.borderColor='rgba(100, 150, 200, 0.9)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(100, 150, 200, 0.4), rgba(80, 140, 200, 0.3))'; this.style.borderColor='rgba(100, 150, 200, 0.6)'">
+            📖 🏛️ 신화 세계 이야기
+        </button>
     `;
     
-    const btns = categoryButtons.querySelectorAll('.category-btn');
-    btns.forEach(btn => {
-        btn.onmouseover = () => {
-            btn.style.background = btn.getAttribute('data-category') === 'medieval' 
-                ? 'rgba(200, 100, 50, 0.5)' 
-                : 'rgba(100, 150, 200, 0.5)';
-            btn.style.borderColor = btn.getAttribute('data-category') === 'medieval'
-                ? 'rgba(200, 100, 50, 0.8)'
-                : 'rgba(100, 150, 200, 0.8)';
-        };
-        btn.onmouseout = () => {
-            btn.style.background = btn.getAttribute('data-category') === 'medieval'
-                ? 'rgba(200, 100, 50, 0.3)'
-                : 'rgba(100, 150, 200, 0.3)';
-            btn.style.borderColor = btn.getAttribute('data-category') === 'medieval'
-                ? 'rgba(200, 100, 50, 0.5)'
-                : 'rgba(100, 150, 200, 0.5)';
-        };
-        btn.onclick = () => showCategoryStory(btn.getAttribute('data-category'));
-    });
-    
-    const grid = document.getElementById('unitGrid');
     grid.innerHTML = '';
     
+    // 기존 개인 유닛 스토리는 그대로 표시
     Object.keys(unitDescriptions).forEach(key => {
         const unit = unitDescriptions[key];
         const card = document.createElement('div');
@@ -2021,20 +2010,23 @@ function showCategoryStory(category) {
     storyModal.className = 'unit-info-modal active';
     storyModal.style.zIndex = '10000';
     storyModal.innerHTML = `
-        <div class="unit-info-content" style="max-width: 900px; max-height: 85vh;">
+        <div class="unit-info-content" style="max-width: 850px; max-height: 85vh;">
             <div class="unit-info-header">
                 <h2>${categoryData.icon} ${categoryData.name}의 세계</h2>
                 <button class="close-modal" onclick="this.closest('.unit-info-modal').remove()">×</button>
             </div>
             <div style="
                 padding: 30px;
-                line-height: 1.8;
-                font-size: 14px;
+                line-height: 1.9;
+                font-size: 13px;
                 color: #ddd;
                 white-space: pre-wrap;
                 word-wrap: break-word;
                 overflow-y: auto;
                 max-height: calc(85vh - 100px);
+                background: rgba(0,0,0,0.3);
+                border-radius: 8px;
+                margin: 20px;
             ">${categoryData.story}</div>
         </div>
     `;
@@ -2046,6 +2038,45 @@ function showCategoryStory(category) {
         }
     };
 }
+
+function showUnitStory(unit) {
+    const storyModal = document.createElement('div');
+    storyModal.className = 'unit-info-modal active';
+    storyModal.innerHTML = `
+        <div class="unit-info-content" style="max-width: 600px;">
+            <div class="unit-info-header">
+                <h2>${unit.icon} ${unit.name}의 이야기</h2>
+                <button class="close-modal" onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+            </div>
+            <div style="padding: 20px; line-height: 1.8; font-size: 15px; color: #fff;">
+                ${unit.story}
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <span class="unit-theme-badge">${unit.theme}</span>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(storyModal);
+    
+    // 모달 배경 클릭 시 닫기
+    storyModal.onclick = (e) => {
+        if (e.target === storyModal) {
+            storyModal.remove();
+        }
+    };
+}
+
+function closeUnitInfo() {
+    document.getElementById('unitInfoModal').classList.remove('active');
+}
+
+// 모달 바깥 클릭 시 닫기
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('unitInfoModal');
+    if (e.target === modal) {
+        closeUnitInfo();
+    }
+});
 
 function closeUnitInfo() {
     document.getElementById('unitInfoModal').classList.remove('active');
