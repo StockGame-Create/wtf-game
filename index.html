@@ -967,7 +967,10 @@ let bossMode = {
     selectedUnits: [],
     rerollsLeft: 2,
     currentCards: [],
-    maxRecord: 0
+    maxRecord: 0,
+    cardCount: 3,           // ⭐ 추가: 카드 개수
+    selectCount: 1,
+      teamSize: 5            // ⭐ 추가: 선택 가능한 카드 개수
 };
         const speedMultiplier = 3;
         const intervalDelayBase = 20;
@@ -1177,9 +1180,7 @@ let bossMode = {
                     <option value="knight">🗡️ 기사</option>
                     <option value="archer">🏹 궁수</option>
                     <option value="snowman">🐦 새잡이</option>
-                    <option value="golem">🗿 골렘</option>
                     <option value="shielder">🛡️ 쉴더</option>
-                    <option value="healer">💊 힐러</option>
                     <option value="bomberman">💣 폭탄병</option>
                     <option value="hammerman">🔨 해머맨</option>
                     <option value="ninja">🥷 닌자</option>
@@ -1480,6 +1481,28 @@ const futureUnitsHTML = `
         <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDAdvancedRepairShopSpecial" value="0" min="0" max="100"></div>
     </div>
 </div>
+    <div class="unit-config">
+        <div class="unit-header"><strong>🎮 컨트롤러</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDControllerFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDControllerFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDControllerFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDControllerBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDControllerBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDControllerBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDControllerSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
 `;
 
 
@@ -1766,6 +1789,14 @@ advancedrepairshop: {
     ability: '8초마다 체력 비율이 가장 낮은 아군 1명을 자신 앞으로 이동시키고 회복 (미래 유닛: 50%, 다른 유닛: 30%). 회복 후 6초간 공격력 2배 버프 부여.',
     story: '2178년 "전장 자동 정비 시스템" AS-900 모델. 원래는 우주 정거장에서 우주선을 수리하던 AI 로봇이었다. "고장난 건 고쳐야지" 가 유일한 프로그래밍이었는데, 어느 날 전쟁터로 잘못 배송되었다. "여기... 우주 정거장 아닌데요?" 하고 항의했지만 이미 늦었다. 배송 취소는 불가능했다. 할 수 없이 "고장난 유닛 = 체력 낮은 유닛" 으로 재정의하고 일을 시작했다. 체력 비율 가장 낮은 아군을 강제로 끌고 와서 "정비 시작합니다~" 하며 수리한다. 미래 유닛은 50% 회복하지만 다른 시대 유닛은 30%만 회복되는데, "고대 기술은 매뉴얼이 없어서..." 라며 변명한다. 수리 후 6초간 공격력 2배 버프를 주는 건 "최적화 패치"라고 부르지만, 사실 그냥 기름 좀 쳐바른 거다. 이동속도 0.1로 극도로 느린 이유는 "정비소는 움직이는 게 아니라 기다리는 겁니다" 라는 철학 때문. 사거리 600으로 멀리서도 "야 너 고장났어, 이리 와" 하고 부를 수 있다. 2대 이상 배치하면 서로 "내가 먼저 수리한다", "아니 내가" 하며 싸워서 아무 일도 안 하는데, 제조사 매뉴얼에 "정비소는 1대만 운용하시오. 2대 이상은 관할권 분쟁으로 작동 불가" 라고 적혀있다. 최근 고민은 "동굴이랑 천사는 왜 안 고쳐지지?" 인데, AI가 "생명체와 마법 구조물은 정비 대상이 아닙니다" 라고 판단했기 때문이다. 취미는 부품 정리인데, 전투 중에도 "이 나사 어디 갔지?" 하며 찾는다.'
 },
+controller: {
+    icon: '🎮',
+    name: '컨트롤러',
+    theme: '미래',
+    stats: 'HP: 150 | 공격: 10 | 속도: 1.5\n공격속도: 6초 | 사거리: 400\n클론: 공격 5, 사거리 80',
+    ability: '6초마다 체력 10을 소모하며 클론 생성 (클론은 체력 40으로 시작하여 2초마다 5씩 감소). 입힌 데미지의 50% 반사. 클론도 50% 반사 능력 보유.',
+    story: '2192년 "자율 복제 드론 시스템" CT-X로 불리는 AI 전투 유닛. 원래는 우주선 유지보수용 로봇이었는데 전쟁에 징발되었다. 자신의 복제본을 6초마다 생성하여 적을 다중으로 공격한다. "원본이 제일 강하죠" 라며 자신감을 드러내지만, 정작 클론들이 너무 빨리 사라져서 ("2초마다 5씩 닳는데 40밖에 없어!") 항상 불평한다. 반사 능력으로 받은 피해의 50%를 돌려주는데, 동료들은 "그래서 더 오래 싸워야 하는 거 아니냐" 고 핀잔을 준다. 클론들은 반투명한 하늘색으로 표시되어 원본과 구분되지만, 본인은 "다 똑같은데 왜 구분해?" 라며 혼동한다. 최근 고민은 "클론이 너무 약해서 거의 1회용이다" 는 것. 체력 관리에 실패하면 본체까지 위험해지기 때문에 전략적 사고가 필요하다.'
+},
   boss: {
         icon: '💀',
         name: '보스',
@@ -1783,140 +1814,147 @@ const categoryStories = {
         icon: '⚔️',
         story: `[왕국 기사훈련소 - 평범한 하루]
 
-오전 6시: 알람이 울린다. 신참 기사는 일어난다. "또 기사생활이다..." 
-
-옆 침대의 기사는 이미 일어나 갑옷을 닦고 있다. 3년 차이인데 벌써 철학자가 됐다. "이것도 명예야." 신참은 속으로 생각한다. '내가 미쳤나?'
-
-오전 7시: 훈련장
-궁수가 화살을 쏜다. 100개 중 99개를 맞혔다. "99개면 100% 아니잖아?" 라고 항의했지만, 훈련관은 웃기만 했다. "내일 또 하지."
-
-"진짜 이 일 언제까지..." 궁수가 한숨을 쉰다.
-
-신참 기사가 옆에서 팔굽혀펴기를 한다. "넌 좋겠다 목표가 있어도 되지만, 나는 드래곤도 봤는데 아직도 기초 훈련이야." 궁수가 웃는다. "그래도 난 화살 100개 계속 쏘는데?" "그래서 우리 둘 다 미친 거야."
-
-오전 8시 30분: 식당
-새잡이가 밥을 먹는다. 숟가락질할 때마다 밥이 떨어진다. 옆의 해머맨이 한숨을 쉰다. "그럼 좀 천천히 먹어..." "빨리 먹어야 훈련할 시간이 있지..." 새잡이의 논리는 좋지만, 현실은 밥투성이다.
-
-폭탄병이 병동에서 나온다. "몇 번째야?" "...73번" "아직도?" "이번엔 진짜 다를 줄 알았어..." 의사는 묻지 않는다. 이미 알고 있다.
-
-해머맨이 밥 그릇을 집어 들었다. "오늘도 120m 넉백 연습할까 라고 생각했는데, 어제 팀원을 날려버려서..." 새잡이가 묻는다. "그 사람 괜찮아?" "몇 시간 뒤에 나타났어. 여기서 며칠 떨어진 곳에." 침묵. 해머맨은 우긴다. "내 실력 탓이 아니야!"
-
-오전 10시: 훈련장 - 근접전 구역
-기사와 기사가 맞붙는다. 신참 vs 경험자. 신참은 3초만에 쓰러진다. "이게... 현실이군..." 경험자가 손을 내민다. "내일 또 하자." 내일? 신참은 이미 내일을 생각하지 않기로 결심했다.
-
-쉴더가 방패를 들었다. 100개 중 99개를 테스트했다. "이게 최고의 방패야. 6초마다 2초간 무적이 되거든." 누군가 말한다. "그냥 도망가는 거지?" 쉴더의 얼굴이 굳는다. "아니야, 이게 전략이다!"
-
-닌자가 1:1 대련을 신청한다. 근접 공격력 5. 모두가 웃는다. "이 새끼 진짜..." 그런데 닌자는 죽는 척하고 뒤로 물러난 후 활을 쏜다. 결국 이긴다. "계획대로였어..." 하지만 눈빛은 떨리고 있다. 진짜 죽을 뻔했거든.
-
-오후 12시: 점심시간
-신참 기사가 옆 기사에게 묻는다. "언제부터 이게 일상이 됐어?" 경험자는 대답한다. "3개월 정도? 6개월? 글쎄... 이제 잘 모르겠어." 둘 다 밥을 먹는다. 말이 없다. 하지만 불편하지 않다.
-
-폭탄병이 또 자신의 폭탄에 맞았다. "25 데미지면... 괜찮지. 자존감이 문제지." 해머맨이 웃는다. "근데 넌 2시간 전에도 맞았잖아." "그래도 이번 건 좀 덜 아팠어." 거짓말이다.
-
-오후 2시: 동굴 유닛의 숙소
-동굴은 움직이지 않는다. 이동속도 0.1은 화면을 1시간 움직일 정도다. "왜 안 움직여?" "움직이기 싫어." 간단한 대답이다.
-
-하지만 12초마다 새로운 병사가 나온다. 동굴은 혼잣말을 한다. "얘들이 내 친구야. 혼자 있으니까..." 누군가 듣고 있으면 위로할 것 같지만, 아무도 없다. 동굴은 이미 혼자가 되는 데 익숙하다.
-
-오후 3시 30분: 힐러 집회실
-힐러 3명이 모였다. 그리고 싸운다. "넌 어제 약초를 잘못 골랐어." "아니야, 이 하나가 애매했어." "그래서 내가 맞는 거야!"
-
-한 기사가 관찰자로 들어간다. "혹시 상처가?" "아뇨, 그냥... 이들 둘 다 배울 점이 많아서..." 기사는 나간다. 힐러들의 싸움은 끝나지 않는다. 하지만 이상하게 누군가는 항상 회복된다.
-
-오후 5시: 훈련 마무리
-모두가 피곤해하지만, 누군가는 계속 한다. 닌자는 죽는 척 연습을 한다. "한 번 더... 한 번 더..." 진짜로 죽을 것 같지만, 매번 살아난다. 그게 전부다.
-
-새잡이는 650m 거리의 표적을 맞춘다. 1발. "이 정도면... 맞지?" 다른 누구도 할 수 없는 거리다. 그래서 혼자다. 하지만 필요하다.
-
-저녁 6시: 숙소
-기사들이 갑옷을 닦는다. 신참은 벌써 같은 부분을 30분째 닦고 있다. "언제쯤 실제 전투가 있을까?" 경험자는 쉽게 대답하지 않는다. "글쎄... 아직도 오지 않으면 좋겠어." 신참은 이해할 수 없다. "뭐라고?" "아무 것도 아니야."
-
-밤 10시: 막사
-모두가 자러 간다. 폭탄병은 자기 전에 자신의 폭탄에 또 맞을 꿈을 꾼다. 닌자는 죽지 않는 꿈을 꾼다. 새잡이는 밥을 먹지 않는 꿈을 꾼다.
-
-신참 기사는 생각한다. "내일도 이럴까?"
-
-답은 이미 정해져 있다. 내일도, 모레도, 계속 이럴 것이다.
-
-하지만 이상하게도, 모두가 계속 한다.
-
-왜냐하면, 이게 우리의 일상이니까.`
+-`
     },
     mythology: {
         name: '신화',
         icon: '🏛️',
         story: `[신성한 산 요새 - 신들의 평범한 날씨]
 
-새벽: 하늘이 밝아온다.
-
-천사 1호가 침대에서 일어난다. 4번 부활시킬 수 있다. 하지만 혼자다. 천사 2호를 만나고 싶지 않다. 왜냐하면 만나면 싸우기 때문이다. "내가 살렸어." "아니 난데?" 이 싸움은 이미 1000번을 넘겼다.
-
-어제는 누군가 죽어서 누가 살릴지 두 천사가 싸웠고, 결국 아무도 안 살렸다. 죽은 오크가 30분 뒤 혼자 살아났다. "그게... 부활이야?"
-
-오전 7시: 산 훈련장
-
-오크가 팔굽혀펴기를 한다. 근육 문화가 자존심이다. "공격력 20, 공격속도 2.5초! 나 강하잖아?" 근데 체력은 110에 불과하다. "체력? 그건 약한 거 아니고 민첩형이야!"
-
-옆에서 구름이 번개를 날린다. "공격력 30이거든?" 오크의 얼굴이 굳는다. "뭐라고?" "너 25잖아? 난 30이야. 이건 수학이야." 오크가 화낸다. "그럼 1:1 해볼까?" "싫아, 난 비행 중이니까." 구름이 하늘로 올라간다. 오크는 여전히 화났지만, 결국 진 거다.
-
-오전 9시: 신화 세계의 카페?
-
-정령이 요정 2마리로 분열되고, 요정이 나비 4마리로 분열된다. 어느 순간부터 이게 자주 일어난다. "우리 4마리가 한 명 때려쓰러뜨렸어!" 감동의 순간. 하지만 원래 정령은 울고 싶다. "우린... 정말... 해냈어..." 작지만, 함께다.
-
-나무가 들어온다. 이동속도 0.05. "오늘도 자리에 앉을까?" 움직이지 않는다. 8초마다 누군가를 끌어 400m 밀어낸다. "난 움직일 필요가 없어. 이게 내 능력이야." 누군가 묻는다. "혼자 괜찮아?" 나무는 대답하지 않는다.
-
-골렘이 들어온다. 어제는 어디 가다가 중간에 멈췄고, 오늘도 계속 간다. 목적지까지 아직 3시간. "30분에 한 바퀴... 언제 목적지에 갈까?" 골렘은 속도를 줄이지 않는다. "계획이 중요해. 목표가 아니라."
-
-오전 11시: 독사의 방
-
-독사는 거울을 본다. "이 모습... 이게 나야?" 수천 년을 혼자 살았다. 피라미드를 지키고, 모래를 날리고, 적을 약하게 했다. 하지만 친구는 없었다.
-
-최근에 누군가와 싸웠다. 결과는 모래 상태이상. 피해자는 3초 동안 15 데미지를 받고, 회복량이 50% 줄었다. "미안해..." 라고 독사가 중얼거렸지만, 아무도 듣지 않았다.
-
-오후 1시: 훈련장 - 중심부
-
-유니콘이 차지를 하고 있다. "차지 1... 차지 2... 차지 3..." 혼잣말로 열심히 센다. 1.5초마다 +1 차지. 최대 6단계까지 간다. 준비 완료. 적을 공격한다. 공격력 85. 스플래시. 깔끔하다. 
-
-그리고 즉시 200m를 후퇴한다. "전략적 이동이야!" 하지만 눈은 떨리고 있다. 진짜로 겁났거든.
-
-오후 3시: 신화 세계의 깊은 곳
-
-사탄이 나타난다. 빙의 전문가다. 정확히는, "네 몸을 내가 쓸게" 라는 존재다. 누군가 물었다. "왜 빙의를 해?" "재밌거든?" 더 깊은 이유는 없다. 아니, 있을지도 모르지만 말하지 않는다.
-
-오크를 빙의시켰다. 오크는 검은 심장이 되고, 오크 능력을 잃고, 사탄의 능력을 얻는다. 3.6초 후, 원래대로 돌아온다. "내가... 뭐했어?" 오크는 기억하지 못한다. 하지만 30 데미지를 받았다. "왜...?"
-
-오후 5시: 신화 요새 원탁
-
-천사들이 모였다. 2명이 아니라 3명이다. 이 상태가 최적이다. 3명 이상은 싸우기 때문이다. 방금 누군가가 죽었다. "내가 살릴게!" "아니 내가!" 싸움이 난다. "아 그럼 아무도 말고!" 결국 아무도 안 살린다. 죽은 자는 30분 뒤에 자동으로 살아난다. "그게... 부활이야?"
-
-저녁 6시: 신화 세계의 숲
-
-정령과 요정과 나비가 뛰어다닌다. 어쩌다 1명에서 4명이 되었다. "우린 절대 죽지 않아." 맞다. 계속 분열할 뿐이다. 하지만 약해진다. 나비 공격력 5, HP 40. 여전히 함께다.
-
-독사가 혼자 앉아있다. 누군가 옆에 앉을까? 기다려 본다. 한 시간, 두 시간... 아무도 안 온다. 하지만 이미 익숙하다.
-
-밤 10시: 하늘의 별
-
-구름이 하늘을 떠다닌다. 한 번은 바람 때문에 팀원을 태웠다. "바람이 심했어..." 라고 변명했지만, 아무도 안 믿었다. 하지만 계속 날아다닌다. 공격력 30은 거짓이 아니니까.
-
-골렘은 여전히 천천히 간다. 오전 7시에 출발한 목표지까지 이제 2시간 50분. "멈추지 말자." 그게 전부다.
-
-밤 12시: 신화 요새
-
-모두가 자러 간다. 천사는 하프를 들고 싶지만, 저녁에 잔뜩 까였으니까 자제한다. 오크는 내일 근육을 자랑할 꿈을 꾼다. 나무는 서 있고, 골렘은 걸어가고, 정령은 분열하고, 독사는 혼자다.
-
-신화 세계도 평범한 일상이다. 
-
-- 천사는 부활을 한다 (싸우지 않으면)
-- 오크는 근육을 자랑한다 (구름에게 진다)
-- 골렘은 느리게 간다 (하지만 멈추지 않는다)
-- 정령은 분열한다 (4마리까지)
-- 나무는 서 있다 (하지만 누군가는 밀쳐낸다)
-- 독사는 혼자다 (하지만 모두를 약하게 한다)
-
-신화도 그냥 일상이야. 신들도 피곤하고, 외로워하고, 싸운다. 단지 우리보다는 오래 살 뿐이다.`
+-`
     }
 };
+
+// bossMode 선언 아래에 추가
+const bossAbilities = [
+    {
+        name: '힐러 보조',
+        icon: '💊',
+        description: '보스가 힐러를 소환합니다',
+        apply: (boss) => {
+            const healer = new Unit('healer', boss.team, 1, 0, Math.random() * 1000);
+            healer.row = 'back';
+            healer.speed = 0.5;
+            healer.range = 600;
+            healer.maxHp = 100;
+            healer.hp = 100;
+            healer.baseDamage = 0;
+            healer.damage = 0;
+            healer.healInterval = 4000;
+            healer.nextHealTime = 0;
+            
+            // 힐러의 회복 능력 수정 (보스용)
+            healer.bossHealer = true;
+            healer.healAmount = 20;
+            
+            units.team2.push(healer);
+            
+            const side = document.getElementById('team2-side');
+            if (side) {
+                healer.x = side.offsetWidth - 100;
+                healer.y = 200;
+                healer.element.style.transform = `translate(${healer.x}px, ${healer.y}px)`;
+                side.appendChild(healer.element);
+                healer.element.classList.add('team2');
+                healer.setTeamColor();
+            }
+            
+            addLog(`👑 보스가 힐러를 소환했습니다!`, true);
+        }
+    },
+    {
+        name: '흑기사 소환',
+        icon: '⚔️',
+        description: '보스가 흑기사 4마리를 소환합니다',
+        apply: (boss) => {
+            for (let i = 0; i < 4; i++) {
+                const knight = new Unit('knight', boss.team, 1, 20, Math.random() * 1000);
+                knight.row = 'front';
+                units.team2.push(knight);
+                
+                const side = document.getElementById('team2-side');
+                if (side) {
+                    knight.x = side.offsetWidth * 0.3 + Math.random() * 100;
+                    knight.y = 100 + i * 80;
+                    knight.element.style.transform = `translate(${knight.x}px, ${knight.y}px)`;
+                    side.appendChild(knight.element);
+                    knight.element.classList.add('team2');
+                    knight.setTeamColor();
+                    
+                    // 흑기사 이펙트
+                    const avatar = knight.element.querySelector('.soldier-avatar');
+                    if (avatar) {
+                        avatar.style.filter = 'brightness(0.3) hue-rotate(180deg)';
+                    }
+                }
+            }
+            addLog(`👑 보스가 흑기사 4마리를 소환했습니다!`, true);
+        }
+    },
+    {
+        name: '무한 공격력',
+        icon: '💥',
+        description: '보스의 공격력이 300으로 증가합니다',
+        apply: (boss) => {
+            boss.baseDamage = 300;
+            boss.damage = 300;
+            
+            // 보스 아바타에 붉은 글로우
+            const avatar = boss.element.querySelector('.soldier-avatar');
+            if (avatar) {
+                avatar.style.filter = 'drop-shadow(0 0 10px #ff0000) drop-shadow(0 0 20px #ff4444)';
+            }
+            
+            addLog(`👑 보스의 공격력이 300으로 폭발적으로 증가했습니다!`, true);
+        }
+    },
+    {
+        name: '디버프',
+        icon: '🖤',
+        description: '가장 체력이 높은 유닛을 오크로 변환합니다',
+        apply: (boss) => {
+            const enemies = units.team1.filter(u => u.alive && u.type !== 'angel' && u.type !== 'cave');
+            
+            if (enemies.length === 0) return;
+            
+            // 체력이 가장 높은 유닛 찾기
+            let highestHpUnit = enemies[0];
+            enemies.forEach(u => {
+                if (u.hp > highestHpUnit.hp) {
+                    highestHpUnit = u;
+                }
+            });
+            
+            // 오크로 변환
+            highestHpUnit.originalType = highestHpUnit.type;
+            highestHpUnit.originalMaxHp = highestHpUnit.maxHp;
+            highestHpUnit.originalDamage = highestHpUnit.damage;
+            highestHpUnit.originalAttackSpeed = highestHpUnit.attackSpeed;
+            
+            highestHpUnit.type = 'orc';
+            highestHpUnit.maxHp = 20;
+            highestHpUnit.hp = Math.min(highestHpUnit.hp, 110);
+            highestHpUnit.baseDamage = 5;
+            highestHpUnit.damage = 5;
+            highestHpUnit.baseAttackSpeed = 2500;
+            highestHpUnit.attackSpeed = 2500;
+            highestHpUnit.range = 120;
+            highestHpUnit.speed = 2.5;
+            highestHpUnit.debuffed = true;
+            
+            // 아바타 변경
+            const avatar = highestHpUnit.element.querySelector('.soldier-avatar');
+            if (avatar) {
+                avatar.textContent = '👹';
+                avatar.style.filter = 'hue-rotate(270deg)';
+            }
+            
+            highestHpUnit.updateDisplay();
+            
+            addLog(`👑 보스가 ${highestHpUnit.team}의 ${highestHpUnit.originalType}를 오크로 변환했습니다!`, true);
+        }
+    }
+];
 
 // openUnitInfo 함수 수정 버전
 function openUnitInfo() {
@@ -2106,7 +2144,7 @@ if (themeSelect && themeSelect.value === 'mythology') {
 }
 
 if (themeSelect && themeSelect.value === 'future') {
-    unitTypes.push('TinyRobot', 'MiniHelicopter','KillerGear', 'AdvancedRepairShop');
+    unitTypes.push('TinyRobot', 'MiniHelicopter','KillerGear', 'AdvancedRepairShop', 'Controller');
 }
 
             if (totalCount === 0) {
@@ -2446,6 +2484,37 @@ if (themeSelect && themeSelect.value === 'future') {
     repairShopCount[teamKey]++;
     this.canRepair = repairShopCount[teamKey] <= 1;
 
+  } else if (type === 'controller') {
+    this.maxHp = 155;
+    this.hp = this.maxHp;
+    this.baseDamage = 10;
+    this.damage = 10;
+    this.baseAttackSpeed = 6000;
+    this.attackSpeed = 6000;
+    this.speed = 1.5;
+    this.range = 400;
+    this.theme = 'future';
+    this.nextCloneTime = 0;
+    this.cloneCostPerSpawn = 10;
+    this.reflectDamagePercent = 0.5;
+    this.hasReflectAbility = true;
+
+} else if (type === 'clone') {
+    this.maxHp = 40;
+    this.hp = this.maxHp;
+    this.baseDamage = 5;
+    this.damage = 5;
+    this.baseAttackSpeed = 3000;
+    this.attackSpeed = 3000;
+    this.speed = 1.5;
+    this.range = 80;
+    this.theme = 'future';
+    this.nextHealthDecayTime = 0;
+    this.healthDecayInterval = 2000;
+    this.healthDecayAmount = 5;
+    this.reflectDamagePercent = 0.5;
+    this.hasReflectAbility = true;
+
     
     // 천사처럼 첫 번째만 기능 활성화
 
@@ -2593,6 +2662,12 @@ if (themeSelect && themeSelect.value === 'future') {
     } else if (this.type === 'advancedrepairshop') {
     icon = '🧰';
     typeLabel = '정비소';
+    } else if (this.type === 'controller') {
+    icon = '🎮';
+    typeLabel = '컨트롤러';
+    } else if (this.type === 'clone') {
+    icon = '🎮';
+    typeLabel = '클론';
     } else if (this.type === 'boss') {
     
         
@@ -2776,6 +2851,52 @@ setTeamColor() {
         addLog(`${this.team} ${label}이(가) 무적으로 데미지를 무시했습니다!`, false);
         return;
     }
+
+        // ⭐⭐⭐ 반사 데미지 추가 (여기!) ⭐⭐⭐
+    if ((this.type === 'controller' || this.type === 'clone') && this.hasReflectAbility && !ignoreInvincible) {
+        // 공격자를 찾아서 반사 데미지 적용
+        const enemies = this.team === units.team1[0]?.team ? units.team2 : units.team1;
+        
+        // 가장 가까운 적에게 반사 (실제 공격자 추정)
+        const team1Side = document.getElementById('team1-side');
+        const team2Side = document.getElementById('team2-side');
+        
+        if (team1Side && team2Side) {
+            const team1Rect = team1Side.getBoundingClientRect();
+            const team2Rect = team2Side.getBoundingClientRect();
+            
+            const myInTeam1 = units.team1.includes(this);
+            const myRect = myInTeam1 ? team1Rect : team2Rect;
+            const myAbsX = myRect.left + this.x;
+            const myAbsY = myRect.top + this.y;
+            
+            let closestEnemy = null;
+            let closestDist = Infinity;
+            
+            enemies.forEach(enemy => {
+                if (enemy.alive) {
+                    const enemyInTeam1 = units.team1.includes(enemy);
+                    const enemyRect = enemyInTeam1 ? team1Rect : team2Rect;
+                    const enemyAbsX = enemyRect.left + enemy.x;
+                    const enemyAbsY = enemyRect.top + enemy.y;
+                    
+                    const dist = Math.sqrt((enemyAbsX - myAbsX) ** 2 + (enemyAbsY - myAbsY) ** 2);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestEnemy = enemy;
+                    }
+                }
+            });
+            
+            if (closestEnemy) {
+                const reflectDamage = Math.floor(damage * this.reflectDamagePercent);
+                if (reflectDamage > 0) {
+                    closestEnemy.takeDamage(reflectDamage, true); // ignoreInvincible = true로 무한 반사 방지
+                    addLog(`${this.team} ${this.type === 'clone' ? '클론' : '컨트롤러'}의 반사! (${reflectDamage} 반사 데미지)`, true);
+                }
+            }
+        }
+    }
                 this.hp -= damage;
                 this.element.classList.add('hit-animation');
                 setTimeout(() => this.element.classList.remove('hit-animation'), 150);
@@ -2785,6 +2906,8 @@ setTeamColor() {
 
                     if (this.hp <= 0) {
     this.hp = 0;
+
+
     
 // 꼬마로봇 생존 스킬
 if (this.type === 'tinyrobot' && !this.lastStandUsed && this.hp <= 0) {
@@ -2975,7 +3098,7 @@ attack(target) {
         return;
     }
 
-  if (this.type === 'healer') {
+if (this.type === 'healer') {
     // 능력이 비활성화되어 있으면 힐 불가
     if (!this.canHeal) {
         return;
@@ -2984,7 +3107,17 @@ attack(target) {
     if (now < this.nextHealTime) return;
     const allies = this.team === units.team1[0].team ? units.team1 : units.team2;
     allies.forEach(a => {
-        if (a.alive && a.type !== 'cave' && a.hp > 1) {  // ⭐ a.hp > 1 조건 추가
+        if (a.alive && a.type !== 'cave' && a.hp > 1) {
+            // ⭐ 보스용 힐러는 고정 20 회복
+            if (this.bossHealer) {
+                const healAmount = 20;
+                a.hp = Math.min(a.maxHp, a.hp + healAmount);
+                a.updateDisplay();
+                a.flashHealthBar();
+                return;
+            }
+            
+            // 일반 힐러 로직
             let healMultiplier = 1.0;
             if (a.theme && a.theme !== 'medieval') {
                 healMultiplier = 0.1;
@@ -3276,6 +3409,7 @@ if (this.type === 'advancedrepairshop') {
                   this.spawnType === 'minihelicopter' ? '미니 헬리콥터' :
                   this.spawnType === 'killergear' ? '살인 기어' : 
                   this.spawnType === 'advancedrepairshop' ? '정비소' :
+                  this.spawnType === 'controller' ? '컨트롤러' : '';
 addLog(`${this.team} 동굴이 ${typeLabel}을(를) 소환했습니다! (체력 -${this.spawnCost})`, true);
                         }
                         this.nextSpawnTime = now + this.spawnInterval;
@@ -3445,6 +3579,10 @@ const distance = Math.sqrt(dx * dx + dy * dy);
 
 if (distance > this.range) return;
 
+
+// 반사 데미지 로직
+
+
 // 유니콘 공격
 if (this.type === 'unicorn') {
     if (this.chargeLevel >= 2) {
@@ -3535,9 +3673,12 @@ let damage = this.damage * damageMultiplier;
                 }
 
                 target.takeDamage(damage);
+
+          
+           
                 
                // attack 함수의 사탄 빙의 부분을 이렇게 수정:
-if (this.type === 'satan' && target.alive && !target.isPossessed && target.type !== 'angel' && target.type !== 'cave' && target.type !== 'tree') {
+if (this.type === 'satan' && target.alive && !target.isPossessed && target.type !== 'angel' && target.type !== 'cave' && target.type !== 'tree' && target.type !== 'clone' && target.type !== 'advancedrepairshop') {
     
     // ⭐ 보스는 빙의 불가, 대신 강력한 공격
     if (target.type === 'boss') {
@@ -3830,7 +3971,11 @@ function openBossMode() {
         round: 1,
         selectedUnits: [],
         currentCards: [],
-        maxRecord: 0
+        maxRecord: 0,
+        cardCount: 3,
+               // ⭐ 초기 카드 개수
+        selectCount: 1 ,
+         teamSize: 5       // ⭐ 초기 선택 개수
     };
     
     document.getElementById('bossModeModal').classList.add('active');
@@ -3854,7 +3999,9 @@ function generateCards(count) {
         'knight', 'archer', 'snowman', 'shielder', 
         'hammerman', 'bomberman', 'ninja',
         'orc', 'cloud', 'satan', 'golem', 'unicorn', 'spirit', 'pyramid','tinyrobot','minihelicopter','killergear',
-    ];
+   ];
+
+       const actualCount = bossMode.cardCount || count;
     
     bossMode.currentCards = [];
     for (let i = 0; i < count; i++) {
@@ -3890,10 +4037,13 @@ function displayCards() {
 }
 
 function selectCard(cardIndex) {
-    if (bossMode.selectedUnits.length >= 5) {
-        alert('이미 5개의 유닛을 선택했습니다!');
-        return;
-    }
+    // ⭐ selectCount만큼 선택 가능
+    const maxSelect = bossMode.selectCount || 1;
+    
+ if (bossMode.selectedUnits.length >= bossMode.teamSize) {  // 5 대신 teamSize 사용
+    alert(`이미 ${bossMode.teamSize}개의 유닛을 선택했습니다!`);
+    return;
+}
     
     // 선택한 카드의 정보 가져오기
     const selectedCard = bossMode.currentCards[cardIndex];
@@ -3904,12 +4054,17 @@ function selectCard(cardIndex) {
         position: selectedCard.position
     });
     
-    // 선택 후 모든 카드 새로고침
-    generateCards(3);
+    // ⭐ maxSelect개 미만 선택했으면 카드 유지, 초과하면 새로고침
+    if (bossMode.selectedUnits.length % maxSelect === 0) {
+        generateCards(bossMode.cardCount);
+    } else {
+        // 선택한 카드만 제거
+        bossMode.currentCards.splice(cardIndex, 1);
+        displayCards();
+    }
     
     updateBossUI();
 }
-
 // 선택된 유닛 제거
 function removeSelectedUnit(index) {
     bossMode.selectedUnits.splice(index, 1);
@@ -3918,14 +4073,15 @@ function removeSelectedUnit(index) {
 
 // UI 업데이트
 function updateBossUI() {
-    document.getElementById('selectedCount').textContent = bossMode.selectedUnits.length;
+    const maxSelect = bossMode.selectCount || 1;
+    // 이 줄만 수정:
+    document.getElementById('selectedCount').textContent = `${bossMode.selectedUnits.length} / ${bossMode.teamSize} (${maxSelect}개씩 선택 가능)`;
     
     // 선택된 유닛 표시
     const listContainer = document.getElementById('selectedUnitsList');
     listContainer.innerHTML = '';
     
     bossMode.selectedUnits.forEach((unitData, index) => {
-        // unitData가 객체인지 확인
         const unitType = typeof unitData === 'string' ? unitData : unitData.type;
         const unitPosition = typeof unitData === 'string' ? 'front' : unitData.position;
         
@@ -3944,14 +4100,14 @@ function updateBossUI() {
                 <div>${unitInfo.name}</div>
                 <div style="font-size: 11px; color: #ffd700;">${positionText}</div>
             </div>
-            <button class="remove-btn" onclick="removeSelectedUnit(${index})">×</button>
+           
         `;
         listContainer.appendChild(item);
     });
     
-    // 시작 버튼
+    // 시작 버튼 (이 부분도 수정)
     const startBtn = document.getElementById('startBossBtn');
-    if (bossMode.selectedUnits.length === 5) {
+    if (bossMode.selectedUnits.length === bossMode.teamSize) {
         startBtn.disabled = false;
         if (bossMode.round === 1) {
             startBtn.textContent = '⚔️ 보스전 시작';
@@ -3963,6 +4119,9 @@ function updateBossUI() {
         startBtn.disabled = true;
     }
 }
+    
+    // 시작 버튼
+
 
 // 리롤
 function rerollCards() {
@@ -3980,7 +4139,7 @@ function rerollCards() {
 function startBossBattle() {
     closeBossMode();
     
-    console.log('전투 시작 - 선택된 유닛:', bossMode.selectedUnits); // 디버깅
+    console.log('전투 시작 - 선택된 유닛:', bossMode.selectedUnits);
     
     resetBattle();
     battleActive = true;
@@ -3989,38 +4148,62 @@ function startBossBattle() {
     const playerTeam = '플레이어';
     const bossTeam = '보스';
     
-    // 플레이어 유닛 생성 ⭐ 수정
+    // 플레이어 유닛 생성
     bossMode.selectedUnits.forEach((unitData, index) => {
-        console.log(`유닛 ${index} 생성:`, unitData); // 디버깅
-        
-        // ⭐ 핵심: unitData.type으로 접근!
+        console.log(`유닛 ${index} 생성:`, unitData);
         const unit = new Unit(unitData.type, playerTeam, 1, 20, index);
-        unit.row = unitData.position; // ⭐ 위치도 설정
+        unit.row = unitData.position;
         units.team1.push(unit);
     });
     
     // 보스 생성
-const boss = new Unit('boss', bossTeam, 1, 0, 0);
-boss.row = 'front';
-
-// 라운드마다 체력 10 증가
-boss.maxHp = 750 + ((bossMode.round - 1) * 25);
-boss.hp = boss.maxHp;
-
-// ★ 이 부분을 추가/수정:
-if (boss.infoElement) {
-    const healthFill = boss.infoElement.querySelector('.health-fill');
-    if (healthFill) {
-        const hpPercent = (boss.hp / boss.maxHp) * 100;
-        healthFill.style.width = `${hpPercent}%`;
+    const boss = new Unit('boss', bossTeam, 1, 0, 0);
+    boss.row = 'front';
+    boss.maxHp = 750 + ((bossMode.round - 1) * 10);
+    boss.hp = boss.maxHp;
+    
+    if (boss.infoElement) {
+        const healthFill = boss.infoElement.querySelector('.health-fill');
+        if (healthFill) {
+            const hpPercent = (boss.hp / boss.maxHp) * 100;
+            healthFill.style.width = `${hpPercent}%`;
+        }
+        const hpText = boss.infoElement.querySelector('.hp-text');
+        if (hpText) {
+            hpText.textContent = Math.floor(boss.hp);
+        }
     }
-    const hpText = boss.infoElement.querySelector('.hp-text');
-    if (hpText) {
-        hpText.textContent = Math.floor(boss.hp);
-    }
+    
+    units.team2.push(boss);
+    
+    // ⭐ 5의 배수 라운드에서 특별 능력 발동
+  // 기존 코드:
+// ⭐ 5의 배수 라운드에서 특별 능력 발동
+if (bossMode.round % 5 === 0) {
+    const randomAbility = bossAbilities[Math.floor(Math.random() * bossAbilities.length)];
+    
+    setTimeout(() => {
+        addLog(`🌟 특별 라운드! ${randomAbility.icon} ${randomAbility.name} 발동!`, true);
+        randomAbility.apply(boss);
+    }, 1000);
+    
+    // ⭐ 모달도 if 블록 안으로 이동
+    setTimeout(() => {
+        const modal = document.createElement('div');
+        modal.className = 'winner-announce';
+        modal.innerHTML = `
+            <div style="padding: 20px;">
+                <h2 style="margin-bottom: 15px;">🌟 특별 라운드 ${bossMode.round}</h2>
+                <div style="font-size: 48px; margin: 20px 0;">${randomAbility.icon}</div>
+                <h3 style="color: #ffd700; margin-bottom: 10px;">${randomAbility.name}</h3>
+                <p style="font-size: 14px; color: #ddd;">${randomAbility.description}</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        setTimeout(() => modal.remove(), 3000);
+    }, 500);
 }
-
-units.team2.push(boss);
+    
     renderBattlefield();
     addLog(`👑 보스전 라운드 ${bossMode.round} 시작!`);
     setBattleInterval();
@@ -4069,6 +4252,8 @@ units.team2.push(boss);
       { name: 'MiniHelicopter' },
         { name: 'KillerGear' },
          { name: 'AdvancedRepairShop' },
+         { name: 'Controller' },
+         
          
 ];
 
@@ -4339,6 +4524,139 @@ renderBattlefield();
     }
 });
 
+// 컨트롤러 클론 생성 및 클론 체력 감소
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'controller' && u.alive) {
+        // 첫 클론 생성 시간 설정
+        if (u.nextCloneTime === 0) {
+            u.nextCloneTime = now + u.attackSpeed;
+        }
+        
+        // 6초마다 클론 생성
+        if (now >= u.nextCloneTime && u.hp > u.cloneCostPerSpawn) {
+            u.hp -= u.cloneCostPerSpawn;
+            u.updateDisplay();
+            
+            // 클론 유닛 생성
+            const clone = new Unit('clone', u.team, 1, 20, Math.random() * 1000);
+            clone.row = u.row;
+            clone.x = u.x + (Math.random() - 0.5) * 60;
+            clone.y = u.y + (Math.random() - 0.5) * 60;
+            clone.nextHealthDecayTime = now + clone.healthDecayInterval;
+            
+            if (u.team === units.team1[0]?.team) {
+                units.team1.push(clone);
+            } else {
+                units.team2.push(clone);
+            }
+            
+            const sideId = u.team === units.team1[0]?.team ? 'team1-side' : 'team2-side';
+            const side = document.getElementById(sideId);
+            if (side) {
+                clone.element.style.transform = `translate(${clone.x}px, ${clone.y}px)`;
+                side.appendChild(clone.element);
+                clone.element.classList.add(u.team === units.team1[0]?.team ? 'team1' : 'team2');
+                clone.setTeamColor();
+                
+                // 클론 반투명 하늘색 처리
+                clone.element.style.opacity = '0.5';
+                const cloneAvatar = clone.element.querySelector('.soldier-avatar');
+                if (cloneAvatar) {
+                    cloneAvatar.style.filter = 'brightness(0.7) hue-rotate(200deg) saturate(1.5)';
+                    cloneAvatar.style.color = '#87CEEB';
+                }
+            }
+            
+            addLog(`${u.team} 컨트롤러가 클론을 생성했습니다!`, true);
+            u.nextCloneTime = now + u.attackSpeed;
+        }
+    }
+});
+
+// 클론 체력 감소 (2초마다 5씩) - 컨트롤러와 별도로 처리
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'clone' && u.alive) {
+        if (u.nextHealthDecayTime === 0) {
+            u.nextHealthDecayTime = now + u.healthDecayInterval;
+        }
+        
+        if (now >= u.nextHealthDecayTime) {
+            u.hp -= u.healthDecayAmount;
+            u.updateDisplay();
+            
+            if (u.hp <= 0) {
+                u.hp = 0;
+                u.alive = false;
+                u.element.classList.add('dead');
+                setTimeout(() => {
+                    if (u.element && u.element.parentNode) {
+                        u.element.parentNode.removeChild(u.element);
+                    }
+                }, 1000);
+            }
+            
+            u.nextHealthDecayTime = now + u.healthDecayInterval;
+        }
+    }
+});
+
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'controller' && u.alive) {
+        // 첫 클론 생성 시간 설정
+        if (u.nextCloneTime === 0) {
+            u.nextCloneTime = now + u.attackSpeed;
+        }
+        
+        // 6초마다 클론 생성
+        if (now >= u.nextCloneTime && u.hp > u.cloneCostPerSpawn) {
+            u.hp -= u.cloneCostPerSpawn;
+            u.updateDisplay();
+            
+            // 클론 유닛 생성
+            const clone = new Unit('clone', u.team, 1, 20, Math.random() * 1000);
+            clone.row = u.row;
+            
+            // ⭐⭐⭐ 클론을 컨트롤러 바로 앞에 소환 ⭐⭐⭐
+            const team1Name = units.team1[0]?.team;
+            if (u.team === team1Name) {
+                // 레드팀이면 오른쪽 앞에 (적 방향)
+                clone.x = u.x + 80;
+            } else {
+                // 블루팀이면 왼쪽 앞에 (적 방향)
+                clone.x = u.x - 80;
+            }
+            clone.y = u.y + (Math.random() - 0.5) * 20; // 약간의 Y축 랜덤
+            
+            clone.nextHealthDecayTime = now + clone.healthDecayInterval;
+            
+            if (u.team === units.team1[0]?.team) {
+                units.team1.push(clone);
+            } else {
+                units.team2.push(clone);
+            }
+            
+            const sideId = u.team === units.team1[0]?.team ? 'team1-side' : 'team2-side';
+            const side = document.getElementById(sideId);
+            if (side) {
+                clone.element.style.transform = `translate(${clone.x}px, ${clone.y}px)`;
+                side.appendChild(clone.element);
+                clone.element.classList.add(u.team === units.team1[0]?.team ? 'team1' : 'team2');
+                clone.setTeamColor();
+                
+                // 클론 반투명 하늘색 처리
+                clone.element.style.opacity = '0.7';
+                const cloneAvatar = clone.element.querySelector('.soldier-avatar');
+                if (cloneAvatar) {
+                    cloneAvatar.style.filter = 'brightness(1.2) hue-rotate(180deg) saturate(2)';
+                }
+            }
+            
+            addLog(`${u.team} 컨트롤러가 클론을 생성했습니다!`, true);
+            u.nextCloneTime = now + u.attackSpeed;
+        }
+    }
+});
+
                  [...units.team1, ...units.team2].forEach(u => {
      // battleLoop의 빙의 해제 부분을 이렇게 수정:
 // battleLoop의 빙의 해제 부분을 이렇게 수정:
@@ -4437,7 +4755,7 @@ if (u.buffEndTime && now >= u.buffEndTime) {
         'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
         'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄',   'spirit': '✨', 'fairy': '🧚‍♀️', 'butterfly': '🦋', 'cloud': '☁️', 'pyramid': '🐍',
         'tinyrobot': '🤖', 'minihelicopter': '🚁', 'killergear': '⚙️','advancedrepairshop': '🧰'
-          // 
+        ,'controller': '🎮'  // 
     };
         avatar.textContent = icons[u.originalType] || '🗡️';
         avatar.style.filter = '';
@@ -4816,20 +5134,174 @@ function openNextRound() {
     bossMode.round++;
     bossMode.rerollsLeft = 1;
     
-    document.getElementById('bossModeModal').classList.add('active');
-    document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
-    document.getElementById('bossCardSelection').style.display = 'block';
-    document.getElementById('bossRoundResult').style.display = 'none';
+    // ⭐ 5의 배수 라운드 클리어 시 보상 선택
+    if ((bossMode.round - 1) % 5 === 0 && bossMode.round > 1) {
+        showRewardSelection();
+    } else {
+        document.getElementById('bossModeModal').classList.add('active');
+        document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
+        document.getElementById('bossCardSelection').style.display = 'block';
+        document.getElementById('bossRoundResult').style.display = 'none';
+        
+        showReplaceMode();
+    }
+}
+
+// ⭐ 보상 선택 화면
+function showRewardSelection() {
+    const modal = document.getElementById('bossModeModal');
+    modal.classList.add('active');
     
-    // 유닛 1개 제거 선택 모드
+    // innerHTML으로 전체를 교체하지 말고 기존 구조 유지
+    const header = modal.querySelector('.unit-info-header h2');
+    if (header) {
+        header.textContent = '🎁 특별 보상 선택';
+    }
+    
+    document.getElementById('bossCardSelection').style.display = 'none';
+    document.getElementById('bossRoundResult').style.display = 'block';
+    
+    const resultDiv = document.getElementById('bossRoundResult');
+    resultDiv.innerHTML = `
+        <div style="padding: 30px; text-align: center;">
+            <p style="font-size: 18px; color: #ffd700; margin-bottom: 30px;">
+                라운드 ${bossMode.round - 1} 클리어! 보상을 선택하세요
+            </p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <div class="reward-card" onclick="selectReward('select')" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border: 3px solid #ffd700;
+                    border-radius: 15px;
+                    padding: 30px;
+                    cursor: pointer;
+                    width: 250px;
+                    transition: transform 0.3s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎴</div>
+                    <h3 style="color: #fff; margin-bottom: 10px;">유지 유닛 수 +1</h3>
+                    <p style="color: #ddd; font-size: 14px;">
+                        다음 라운드부터<br>
+                        카드를 ${bossMode.selectCount}개 → ${bossMode.selectCount + 1}개 선택 가능<br>
+                        (현재: ${bossMode.selectCount}개)
+                    </p>
+                </div>
+                 
+                <div class="reward-card" onclick="selectReward('more')" style="
+                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    border: 3px solid #ffd700;
+                    border-radius: 15px;
+                    padding: 30px;
+                    cursor: pointer;
+                    width: 250px;
+                    transition: transform 0.3s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div class="reward-card" onclick="selectReward('team')" style="...">
+    <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+    <h3 style="color: #fff; margin-bottom: 10px;">팀 크기 +1</h3>
+    <p style="color: #ddd; font-size: 14px;">
+        최대 팀원을<br>
+        ${bossMode.teamSize}명 → ${bossMode.teamSize + 1}명으로 증가<br>
+        (현재: ${bossMode.teamSize}명)
+    </p>
+</div>
+        
+            </div>
+        </div>
+    `;
+}
+
+function selectReward(type) {
+  if (type === 'select') {
+    bossMode.selectCount++;
+    alert(`다음 라운드부터 교체 시 ${bossMode.selectCount}개의 유닛을 유지할 수 있습니다!`);
+         } else if (type === 'team') {  // ⭐ 추가
+        bossMode.teamSize++;
+        alert(`다음 라운드부터 팀 크기가 ${bossMode.teamSize}명으로 증가합니다!`);
+        
+    } else if (type === 'more') {
+        // 카드 개수 증가
+        bossMode.cardCount++;
+        
+        alert(`다음 라운드부터 ${bossMode.cardCount}개의 카드 중 선택할 수 있습니다!`);
+    }
+    
+    // 다음 라운드로
+    document.getElementById('bossModeModal').classList.remove('active');
+    setTimeout(() => {
+        document.getElementById('bossModeModal').classList.add('active');
+        document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
+        document.getElementById('bossCardSelection').style.display = 'block';
+        document.getElementById('bossRoundResult').style.display = 'none';
+        
+        showReplaceMode();
+    }, 500);
+}
+
+// ⭐ 추가 카드 선택 화면
+function showExtraCardSelection() {
+    const allUnitTypes = [
+        'knight', 'archer', 'snowman', 'shielder', 
+        'hammerman', 'bomberman', 'ninja',
+        'orc', 'cloud', 'satan', 'golem', 'unicorn', 'spirit', 'pyramid',
+        'tinyrobot', 'minihelicopter', 'killergear'
+    ];
+    
+    const modal = document.getElementById('bossModeModal');
+    const content = modal.querySelector('.unit-info-content');
+    
+    content.innerHTML = `
+        <div class="unit-info-header">
+            <h2>🎴 추가할 유닛 선택</h2>
+        </div>
+        <div style="padding: 20px;">
+            <div id="extraCardContainer" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 15px;
+                max-height: 60vh;
+                overflow-y: auto;
+            "></div>
+        </div>
+    `;
+    
+    const container = document.getElementById('extraCardContainer');
+    
+    allUnitTypes.forEach(unitType => {
+        const unitInfo = unitDescriptions[unitType];
+        
+        const card = document.createElement('div');
+        card.className = 'boss-card';
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+            <div class="boss-card-icon">${unitInfo.icon}</div>
+            <div class="boss-card-name">${unitInfo.name}</div>
+            <div class="boss-card-stats" style="font-size: 11px;">${unitInfo.stats.split('\n')[0]}</div>
+            <button class="boss-card-select" onclick="addExtraUnit('${unitType}')">추가</button>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function addExtraUnit(unitType) {
+    if (bossMode.selectedUnits.length >= 10) {
+        alert('팀이 가득 찼습니다!');
+        return;
+    }
+    
+    bossMode.selectedUnits.push({ type: unitType, position: 'back' });
+    
+    alert(`${unitDescriptions[unitType].name} 유닛이 팀에 추가되었습니다!`);
+    
+    // 교체 모드로 돌아가기
     showReplaceMode();
 }
+
 
 // 교체 모드
 function showReplaceMode() {
     const container = document.getElementById('cardContainer');
-    container.innerHTML = '<p style="text-align: center; font-size: 16px; color: #ffd700;">유지할 유닛 1개를 선택하세요 (나머지는 제거됩니다)</p>';
-    
+container.innerHTML = `<p style="text-align: center; font-size: 16px; color: #ffd700;">유지할 유닛 ${bossMode.selectCount}개를 선택하세요 (나머지는 제거됩니다)</p>`;    
     const listContainer = document.getElementById('selectedUnitsList');
     listContainer.innerHTML = '';
     
@@ -4859,16 +5331,50 @@ function showReplaceMode() {
 
 // 유닛 교체
 function keepOneUnit(index) {
-    const keptUnit = bossMode.selectedUnits[index];
-    bossMode.selectedUnits = [keptUnit];
+    const clickedUnit = bossMode.selectedUnits[index];
     
-    generateCards(3);
-    updateBossUI();
+    // 이미 선택된 유닛이면 선택 취소
+    if (clickedUnit.kept) {
+        clickedUnit.kept = false;
+        // 시각적 표시 제거
+        const items = document.querySelectorAll('.selected-unit-item');
+        if (items[index]) {
+            items[index].style.border = '';
+            items[index].querySelector('div:last-child').textContent = '클릭하여 유지';
+        }
+    } else {
+        // 이미 선택된 유닛 개수 확인
+        const alreadyKept = bossMode.selectedUnits.filter(u => u.kept).length;
+        
+        if (alreadyKept >= bossMode.selectCount) {
+            alert(`최대 ${bossMode.selectCount}개까지만 유지할 수 있습니다!`);
+            return;
+        }
+        
+        // 유닛 선택
+        clickedUnit.kept = true;
+        // 시각적 표시
+        const items = document.querySelectorAll('.selected-unit-item');
+        if (items[index]) {
+            items[index].style.border = '3px solid #4CAF50';
+            items[index].querySelector('div:last-child').textContent = '✓ 선택됨';
+            items[index].querySelector('div:last-child').style.color = '#4CAF50';
+        }
+    }
     
-    const startBtn = document.getElementById('startBossBtn');
-    if (startBtn) startBtn.style.display = 'block';
-    
-    // 리롤 버튼 코드 삭제
+    // selectCount개 선택되면 카드 생성
+    const keptCount = bossMode.selectedUnits.filter(u => u.kept).length;
+    if (keptCount === bossMode.selectCount) {
+        // 선택된 유닛들만 남기기
+        bossMode.selectedUnits = bossMode.selectedUnits.filter(u => u.kept);
+        bossMode.selectedUnits.forEach(u => delete u.kept);
+        
+        generateCards(bossMode.cardCount);
+        updateBossUI();
+        
+        const startBtn = document.getElementById('startBossBtn');
+        if (startBtn) startBtn.style.display = 'block';
+    }
 }
 
         function resetBattle() {
