@@ -807,7 +807,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>WTF (Made by Unvul)</h1>
+<h1 id="gameTitle" onclick="secretUnlock()">WTF (Made by Unvul)</h1>
         
         <div class="setup-area">
             <div class="team-setup">
@@ -828,6 +828,7 @@
                             <option value="medieval">⚔️ 중세</option>
                             <option value="mythology">🏛️ 신화</option>
                                <option value="future">🤖 미래</option>
+                                 <option value="hidden">🎁 히든</option>
                         </select>
                     </div>
                 </div>
@@ -841,6 +842,9 @@
                 </div>
                 <div id="team1FutureUnits" style="display: none;">
     <!-- 미래 유닛들 -->
+</div>
+<div id="team1HiddenUnits" style="display: none;">
+    <!-- 히든 유닛들 -->
 </div>
             </div>
 
@@ -862,6 +866,8 @@
                             <option value="medieval">⚔️ 중세</option>
                             <option value="mythology">🏛️ 신화</option>
                             <option value="future">🤖 미래</option>
+                              <option value="hidden">🎁 히든</option>
+                              
                         </select>
                     </div>
                 </div>
@@ -874,7 +880,11 @@
                     <!-- 신화 유닛들 -->
                 </div>
                 <div id="team2FutureUnits" style="display: none;">
+                </div>
     <!-- 미래 유닛들 -->
+     <div id="team2HiddenUnits" style="display: none;">
+    <!-- 히든 유닛들 -->
+     </div>
 </div>
 
                 
@@ -1505,6 +1515,33 @@ const futureUnitsHTML = `
     </div>
 `;
 
+const secretunitsHTML = `
+    <div class="unit-config">
+        <div class="unit-header"><strong>🎁 랜덤 박스</strong></div>
+        <div class="unit-controls">
+            <div class="control-group">
+                <label>전방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDRandomBoxFrontCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDRandomBoxFrontCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDRandomBoxFrontCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>후방</label>
+                <div class="count-control">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDRandomBoxBackCount', -1)">-</button>
+                    <input type="number" class="count-input" id="TEAM_IDRandomBoxBackCount" value="0" min="0" max="10">
+                    <button class="count-btn" onclick="changeCount('TEAM_IDRandomBoxBackCount', 1)">+</button>
+                </div>
+            </div>
+            <div class="control-group"><label>치명(%)</label><input type="number" id="TEAM_IDGhostSpecial" value="20" min="0" max="100"></div>
+        </div>
+    </div>
+    `;
+
+
+
 
 
         // 초기화
@@ -1514,6 +1551,11 @@ const futureUnitsHTML = `
         document.getElementById('team2MythologyUnits').innerHTML = mythologyUnitsHTML.replace(/TEAM_ID/g, 'team2');
         document.getElementById('team1FutureUnits').innerHTML = futureUnitsHTML.replace(/TEAM_ID/g, 'team1');
 document.getElementById('team2FutureUnits').innerHTML = futureUnitsHTML.replace(/TEAM_ID/g, 'team2');
+// 히든 테마가 해금되었을 때만 HTML 삽입
+if (window.unlockedThemes && window.unlockedThemes.includes('hidden')) {
+    document.getElementById('team1HiddenUnits').innerHTML = secretunitsHTML.replace(/TEAM_ID/g, 'team1');
+    document.getElementById('team2HiddenUnits').innerHTML = secretunitsHTML.replace(/TEAM_ID/g, 'team2');
+}
 
        function switchTeam1Theme() {
     const theme = document.getElementById('team1ThemeSelect').value;
@@ -1521,16 +1563,30 @@ document.getElementById('team2FutureUnits').innerHTML = futureUnitsHTML.replace(
         document.getElementById('team1MedievalUnits').style.display = 'block';
         document.getElementById('team1MythologyUnits').style.display = 'none';
         document.getElementById('team1FutureUnits').style.display = 'none';
+         document.getElementById('team1HiddenUnits').style.display = 'none';
     } else if (theme === 'mythology') {
         document.getElementById('team1MedievalUnits').style.display = 'none';
         document.getElementById('team1MythologyUnits').style.display = 'block';
         document.getElementById('team1FutureUnits').style.display = 'none';
-    } else {
+        document.getElementById('team1HiddenUnits').style.display = 'none';
+    } else if (theme === 'future') {
         document.getElementById('team1MedievalUnits').style.display = 'none';
         document.getElementById('team1MythologyUnits').style.display = 'none';
         document.getElementById('team1FutureUnits').style.display = 'block';
+        document.getElementById('team1HiddenUnits').style.display = 'none';
+    
+     } else {  // ⭐ 추가
+        document.getElementById('team1HiddenUnits').style.display = 'block';
+        document.getElementById('team1MedievalUnits').style.display = 'none';
+        document.getElementById('team1MythologyUnits').style.display = 'none';
+        document.getElementById('team1FutureUnits').style.display = 'none';
     }
-}
+       }
+
+    
+    
+
+
 
         function switchTeam2Theme() {
             const theme = document.getElementById('team2ThemeSelect').value;
@@ -1538,16 +1594,41 @@ document.getElementById('team2FutureUnits').innerHTML = futureUnitsHTML.replace(
                 document.getElementById('team2MedievalUnits').style.display = 'block';
                 document.getElementById('team2MythologyUnits').style.display = 'none';
                 document.getElementById('team2FutureUnits').style.display = 'none';
+                document.getElementById('team2HiddenUnits').style.display = 'none';
             } else if (theme === 'mythology') {
                 document.getElementById('team2MedievalUnits').style.display = 'none';
                 document.getElementById('team2MythologyUnits').style.display = 'block';
                 document.getElementById('team2FutureUnits').style.display = 'none';
-            } else {
+                document.getElementById('team2HiddenUnits').style.display = 'none';
+            } else if (theme === 'future') {  // ⭐ 추가
                 document.getElementById('team2MedievalUnits').style.display = 'none';
                 document.getElementById('team2MythologyUnits').style.display = 'none';
-                document.getElementById('team2FutureUnits').style.display = 'block';}
+                document.getElementById('team2FutureUnits').style.display = 'block';
+                document.getElementById('team2HiddenUnits').style.display = 'none';
+            } else {  // ⭐ 추가
+                document.getElementById('team2HiddenUnits').style.display = 'block';
+                document.getElementById('team2MedievalUnits').style.display = 'none';
+                document.getElementById('team2MythologyUnits').style.display = 'none';
+                document.getElementById('team2FutureUnits').style.display = 'none';
+            }
             
         }
+
+        function updateThemeSelects() {
+    if (window.unlockedThemes && window.unlockedThemes.includes('hidden')) {
+        const team1Hidden = document.getElementById('team1HiddenOption');
+        const team2Hidden = document.getElementById('team2HiddenOption');
+        
+        if (team1Hidden) team1Hidden.style.display = 'block';
+        if (team2Hidden) team2Hidden.style.display = 'block';
+
+         document.getElementById('team1HiddenUnits').innerHTML = secretunitsHTML.replace(/TEAM_ID/g, 'team1');
+        document.getElementById('team2HiddenUnits').innerHTML = secretunitsHTML.replace(/TEAM_ID/g, 'team2');
+    }
+}
+
+// 페이지 로드 시 체크
+window.addEventListener('DOMContentLoaded', updateThemeSelects);
 
         function setBattleInterval() {
             clearInterval(battleInterval);
@@ -1797,11 +1878,19 @@ controller: {
     ability: '6초마다 체력 10을 소모하며 클론 생성 (클론은 체력 40으로 시작하여 2초마다 5씩 감소). 입힌 데미지의 50% 반사. 클론도 50% 반사 능력 보유.',
     story: '2192년 "자율 복제 드론 시스템" CT-X로 불리는 AI 전투 유닛. 원래는 우주선 유지보수용 로봇이었는데 전쟁에 징발되었다. 자신의 복제본을 6초마다 생성하여 적을 다중으로 공격한다. "원본이 제일 강하죠" 라며 자신감을 드러내지만, 정작 클론들이 너무 빨리 사라져서 ("2초마다 5씩 닳는데 40밖에 없어!") 항상 불평한다. 반사 능력으로 받은 피해의 50%를 돌려주는데, 동료들은 "그래서 더 오래 싸워야 하는 거 아니냐" 고 핀잔을 준다. 클론들은 반투명한 하늘색으로 표시되어 원본과 구분되지만, 본인은 "다 똑같은데 왜 구분해?" 라며 혼동한다. 최근 고민은 "클론이 너무 약해서 거의 1회용이다" 는 것. 체력 관리에 실패하면 본체까지 위험해지기 때문에 전략적 사고가 필요하다.'
 },
+questionmark: {
+        icon: '❓',
+        name: '??? 보스',
+        theme: '보스',
+        stats: 'HP: 1000 | 공격: 10 | 속도: 1\n공격속도: 4000 | 사거리: 600\n',
+        ability: '??? | 처치 시 히든 선물을 지급합니다.',
+        story: '정체불명의 ??? 보스. 아무도 그의 정체를 모른다. 전설에 따르면 그는 게임의 균형을 조정하기 위해 낮은 확률로 나타난다고 한다. "너희가 과연 라운드 몇에 나를 볼 수 있을까?" 가 입버릇인것이 알려져있다, 플레이어들은 그를 찾아내기 위해 끊임없이 전략을 연구하는 중이다. 그의 출현은 게임 내에서 가장 큰 도전 중 하나로 여겨지며, 또 그 녀석이 마음대로 유닛을 소환한다는 사실이 최근 밝혀진것으로 추정된다. 아마 그를 만나기 위해 보스 라운드때 운이 좋아야 할 것이다.'
+    },  
   boss: {
         icon: '💀',
         name: '보스',
         theme: '보스',
-        stats: 'HP: 750 | 공격: 120 | 속도: 0.7\n공격속도: 4초 | 사거리: 150\n',
+        stats: 'HP: 750(+) | 공격: 120 | 속도: 0.7\n공격속도: 4초 | 사거리: 150\n',
         ability: '강력한 공격 보유. 매 라운드 별 체력이 25씩 증가.',
         story: '라운드마다 강해지는 최종 보스. 정확한 정체는 불명이지만, 소문에 의하면 "게임 밸런스를 조정하는 존재" 라고 한다. "너희가 라운드 몇까지 가나 볼까?" 가 입버릇이며, 매 라운드마다 HP가 25씩 증가한다. 1라운드엔 750이지만 10라운드면 975이 된다. 공격력 120은 웬만한 유닛을 한 방에 보낼 수 있는 사기 수준이고, 스플래시 범위 100으로 뭉쳐있는 적들을 쓸어버린다. 사탄도 못 빙의시키는 위엄을 가졌는데, "내가 보스인데 빙의 당해? 말이 돼?" 라며 웃는다. 실제로 사탄이 빙의 시도하면 "크기 제한 있잖아~" 하며 놀린다. 동료 보스들 모임에서는 "나 10라운드까지 본 적 있어" 하며 자랑하지만, 사실 대부분 플레이어가 5라운드에서 포기한다는 게 비밀이다.'
     }
@@ -1824,6 +1913,33 @@ const categoryStories = {
 -`
     }
 };
+
+// <script> 태그 안에 추가
+let secretClickCount = 0;
+let secretClickTimer = null;
+
+function secretUnlock() {
+    secretClickCount++;
+    
+    // 3초 안에 5번 클릭해야 해금
+    if (secretClickTimer) clearTimeout(secretClickTimer);
+    secretClickTimer = setTimeout(() => {
+        secretClickCount = 0;
+    }, 3000);
+    
+    if (secretClickCount >= 5) {
+        if (!window.unlockedThemes) {
+            window.unlockedThemes = ['medieval', 'mythology', 'future'];
+        }
+        if (!window.unlockedThemes.includes('hidden')) {
+            window.unlockedThemes.push('hidden');
+            updateThemeSelects();
+            alert('✨ 개발자 모드: 히든 테마 해금!');
+            addLog('🔓 개발자 모드로 히든 테마가 해금되었습니다!', true);
+        }
+        secretClickCount = 0;
+    }
+}
 
 // bossMode 선언 아래에 추가
 const bossAbilities = [
@@ -2147,6 +2263,10 @@ if (themeSelect && themeSelect.value === 'future') {
     unitTypes.push('TinyRobot', 'MiniHelicopter','KillerGear', 'AdvancedRepairShop', 'Controller');
 }
 
+if (themeSelect && themeSelect.value === 'hidden') {
+    unitTypes.push('RandomBox');
+}
+
             if (totalCount === 0) {
                 alert('병사 수를 1 이상으로 설정하세요.');
                 return;
@@ -2414,6 +2534,35 @@ if (themeSelect && themeSelect.value === 'future') {
     this.range = 150;
     this.splashRange = 100;
     this.theme = 'boss';
+    } else if (type === 'hiddenquestion') {
+    this.maxHp = 1000;
+    this.hp = this.maxHp;
+    this.baseDamage = 10;
+    this.damage = 10;
+    this.baseAttackSpeed = 10000;
+    this.attackSpeed = 10000;
+    this.speed = 0.5;
+    this.range = 600;
+    this.theme = 'boss';
+    this.nextSpawnTime = 0;
+    this.spawnInterval = 7000;
+    this.spawnCount = 1;
+    this.excludeTypes = ['cave', 'healer', 'angel', 'satan', 'advancedrepairshop', 'tree'];
+
+} else if (type === 'randombox') {
+    this.maxHp = 40;
+    this.hp = this.maxHp;
+    this.baseDamage = 0;
+    this.damage = 0;
+    this.baseAttackSpeed = 999999;
+    this.attackSpeed = 999999;
+    this.speed = 1.5;
+    this.range = 600;
+    this.theme = 'hidden';  // ⭐ 'future'에서 'hidden'으로 변경
+    this.healthLossInterval = 1000;  // ⭐ 1초
+    this.healthLossPerInterval = 10;  // ⭐ 10 체력 감소
+    this.nextHealthLossTime = 0;
+
 
 
 // Unit 클래스 생성자에서
@@ -2668,6 +2817,12 @@ if (themeSelect && themeSelect.value === 'future') {
     } else if (this.type === 'clone') {
     icon = '🎮';
     typeLabel = '클론';
+    } else if (this.type === 'hiddenquestion') {
+    icon = '❓';
+    typeLabel = '물음표 보스';
+} else if (this.type === 'randombox') {
+    icon = '🎁';
+    typeLabel = '랜덤 박스';
     } else if (this.type === 'boss') {
     
         
@@ -3161,6 +3316,52 @@ if (this.type === 'tree') {
     return;
 }
 
+if (this.type === 'hiddenquestion') {
+    if (this.nextSpawnTime === 0) {
+        this.nextSpawnTime = now + this.spawnInterval;
+        return;
+    }
+    
+    if (now >= this.nextSpawnTime) {
+        const allUnitTypes = ['knight', 'archer', 'snowman', 'shielder', 'healer', 
+                              'bomberman', 'hammerman', 'ninja', 'orc', 'angel', 
+                              'satan', 'cloud', 'golem', 'unicorn', 'spirit', 
+                              'pyramid', 'tinyrobot', 'minihelicopter', 'killergear'];
+        
+        const validTypes = allUnitTypes.filter(t => !this.excludeTypes.includes(t));
+        
+        for (let i = 0; i < this.spawnCount; i++) {
+            const randomType = validTypes[Math.floor(Math.random() * validTypes.length)];
+            const spawnedUnit = new Unit(randomType, this.team, 1, 20, Math.random() * 1000);
+            spawnedUnit.row = 'front';
+            
+            // 바로 앞에 겹치지 않게 배치
+            const baseX = this.x + 100;
+            spawnedUnit.x = baseX + (i * 60);
+            spawnedUnit.y = this.y + (Math.random() - 0.5) * 40;
+            
+            if (this.team === units.team1[0].team) {
+                units.team1.push(spawnedUnit);
+            } else {
+                units.team2.push(spawnedUnit);
+            }
+            
+            const sideId = this.team === units.team1[0].team ? 'team1-side' : 'team2-side';
+            const side = document.getElementById(sideId);
+            if (side) {
+                spawnedUnit.element.style.transform = `translate(${spawnedUnit.x}px, ${spawnedUnit.y}px)`;
+                side.appendChild(spawnedUnit.element);
+                spawnedUnit.element.classList.add(this.team === units.team1[0].team ? 'team1' : 'team2');
+                spawnedUnit.setTeamColor();
+            }
+        }
+        
+        addLog(`👑 물음표 보스가 유닛 ${this.spawnCount}마리를 소환했습니다!`, true);
+        this.nextSpawnTime = now + this.spawnInterval;
+    }
+    return;
+}
+
 if (this.type === 'advancedrepairshop') {
     if (!this.canRepair) {
         return;
@@ -3433,7 +3634,7 @@ addLog(`${this.team} 동굴이 ${typeLabel}을(를) 소환했습니다! (체력 
 
    
     
-    if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit' || deadUnit.type === 'killergear' || deadUnit.type === 'tinyrobot' || deadUnit.type === 'advancedrepairshop') {
+    if (deadUnit.type === 'angel' || deadUnit.type === 'cave' ||  deadUnit.type === 'fairy' || deadUnit.type === 'butterfly' || deadUnit.type === 'spirit' || deadUnit.type === 'killergear' || deadUnit.type === 'tinyrobot' || deadUnit.type === 'advancedrepairshop' || deadUnit.type === 'ninja') {
         this.nextReviveCheckTime = now + this.reviveCheckInterval;
         return;
     }
@@ -3682,6 +3883,14 @@ if (this.type === 'satan' && target.alive && !target.isPossessed && target.type 
     
     // ⭐ 보스는 빙의 불가, 대신 강력한 공격
     if (target.type === 'boss') {
+        let damage = 70 * damageMultiplier;  // 10 → 55
+        target.takeDamage(damage);
+        addLog(`${this.team} 사탄이 보스를 공격! 보스는 빙의시킬 수 없습니다, 그러나 ${Math.floor(damage)}로 데미지 상승!)`, true);
+        this.nextAttackTime = now + this.attackSpeed;
+        return;
+    }
+
+    if (target.type === 'hiddenquestion') {
         let damage = 70 * damageMultiplier;  // 10 → 55
         target.takeDamage(damage);
         addLog(`${this.team} 사탄이 보스를 공격! 보스는 빙의시킬 수 없습니다, 그러나 ${Math.floor(damage)}로 데미지 상승!)`, true);
@@ -4157,23 +4366,26 @@ function startBossBattle() {
     });
     
     // 보스 생성
-    const boss = new Unit('boss', bossTeam, 1, 0, 0);
-    boss.row = 'front';
+   // ⭐ 이 부분을 수정
+const bossType = bossMode.hiddenBossType || 'boss'; 
+window.wasHiddenBoss = (bossType === 'hiddenquestion'); // 선택된 보스 타입 사용
+const boss = new Unit(bossType, bossTeam, 1, 0, 0);
+boss.row = 'front';
+
+// 물음표 보스는 고정 체력 1000
+if (bossType === 'hiddenquestion') {
+    boss.maxHp = 1000;
+    boss.hp = 1000;
+} else {
+    // 일반 보스는 라운드별 증가
     boss.maxHp = 750 + ((bossMode.round - 1) * 10);
     boss.hp = boss.maxHp;
-    
-    if (boss.infoElement) {
-        const healthFill = boss.infoElement.querySelector('.health-fill');
-        if (healthFill) {
-            const hpPercent = (boss.hp / boss.maxHp) * 100;
-            healthFill.style.width = `${hpPercent}%`;
-        }
-        const hpText = boss.infoElement.querySelector('.hp-text');
-        if (hpText) {
-            hpText.textContent = Math.floor(boss.hp);
-        }
-    }
-    
+}
+
+boss.updateDisplay(); 
+
+
+
     units.team2.push(boss);
     
     // ⭐ 5의 배수 라운드에서 특별 능력 발동
@@ -4253,6 +4465,7 @@ if (bossMode.round % 5 === 0) {
         { name: 'KillerGear' },
          { name: 'AdvancedRepairShop' },
          { name: 'Controller' },
+         { name: 'RandomBox' },
          
          
 ];
@@ -4506,8 +4719,77 @@ renderBattlefield();
 });
             });
         }
+
+        function spawnRandomUnit(boxUnit) {
+    const allUnitTypes = ['knight', 'archer', 'snowman', 'shielder', 'healer', 
+                          'bomberman', 'hammerman', 'ninja', 'orc', 'angel', 
+                          'satan', 'cloud', 'golem', 'unicorn', 'spirit', 
+                          'pyramid', 'tinyrobot', 'minihelicopter', 'killergear'];
+    
+    const randomType = allUnitTypes[Math.floor(Math.random() * allUnitTypes.length)];
+    const spawnedUnit = new Unit(randomType, boxUnit.team, 1, 20, Math.random() * 1000);
+    spawnedUnit.row = 'front';
+    spawnedUnit.x = boxUnit.x + 50;
+    spawnedUnit.y = boxUnit.y;
+    
+    if (boxUnit.team === units.team1[0].team) {
+        units.team1.push(spawnedUnit);
+    } else {
+        units.team2.push(spawnedUnit);
+    }
+    
+    const sideId = boxUnit.team === units.team1[0].team ? 'team1-side' : 'team2-side';
+    const side = document.getElementById(sideId);
+    if (side) {
+        spawnedUnit.element.style.transform = `translate(${spawnedUnit.x}px, ${spawnedUnit.y}px)`;
+        side.appendChild(spawnedUnit.element);
+        spawnedUnit.element.classList.add(boxUnit.team === units.team1[0].team ? 'team1' : 'team2');
+        spawnedUnit.setTeamColor();
+    }
+    
+    const typeLabel = spawnedUnit.type === 'knight' ? '기사' : spawnedUnit.type === 'archer' ? '궁수' : spawnedUnit.type;
+    addLog(`${boxUnit.team} 랜덤 박스에서 ${typeLabel}이 나타났습니다!`, true);
+}
+
         function battleLoop() {
             const now = Date.now();
+
+            // 랜덤 박스 거리별 체력 감소
+// 랜덤 박스 1초마다 체력 감소
+[...units.team1, ...units.team2].forEach(u => {
+    if (u.type === 'randombox' && u.alive) {
+        // ⭐ 첫 체력 감소 시간 설정
+        if (u.nextHealthLossTime === 0) {
+            u.nextHealthLossTime = now + u.healthLossInterval;
+        }
+        
+        // ⭐ 1초마다 10의 체력 손실
+        if (now >= u.nextHealthLossTime) {
+            u.hp = Math.max(0, u.hp - u.healthLossPerInterval);
+            u.updateDisplay();
+            
+            addLog(`${u.team} 랜덤 박스가 10의 체력을 잃었습니다! (남은 HP: ${u.hp})`, false);
+            
+            if (u.hp <= 0) {
+                u.hp = 0;
+                u.alive = false;
+                u.element.classList.add('dead');
+                
+                // 랜덤 유닛 소환
+                spawnRandomUnit(u);
+                
+                setTimeout(() => {
+                    if (u.element && u.element.parentNode) {
+                        u.element.parentNode.removeChild(u.element);
+                    }
+                }, 1000);
+            }
+            
+            // ⭐ 다음 체력 감소 시간 설정
+            u.nextHealthLossTime = now + u.healthLossInterval;
+        }
+    }
+});
 
             [...units.team1, ...units.team2].forEach(u => {
     // 정비소 버프 해제
@@ -4755,7 +5037,7 @@ if (u.buffEndTime && now >= u.buffEndTime) {
         'hammerman': '🔨', 'ninja': '🥷', 'orc': '👹',
         'golem': '🗿', 'angel': '👼', 'satan': '😈', 'cave': '🛖', 'unicorn': '🦄',   'spirit': '✨', 'fairy': '🧚‍♀️', 'butterfly': '🦋', 'cloud': '☁️', 'pyramid': '🐍',
         'tinyrobot': '🤖', 'minihelicopter': '🚁', 'killergear': '⚙️','advancedrepairshop': '🧰'
-        ,'controller': '🎮'  // 
+        ,'controller': '🎮','clone': '🎮', 'randombox': '🎁'  // 
     };
         avatar.textContent = icons[u.originalType] || '🗡️';
         avatar.style.filter = '';
@@ -5109,11 +5391,28 @@ if (winner === '플레이어') {
     if (bossMode.round > bossMode.maxRecord) {
         bossMode.maxRecord = bossMode.round;
     }
+
+          // ⭐ 물음표 보스 클리어 시 히든 테마 해금
+        if (wasHiddenBoss) {
+            if (!window.unlockedThemes) {
+                window.unlockedThemes = ['medieval', 'mythology', 'future'];
+            }
+            if (!window.unlockedThemes.includes('hidden')) {
+                window.unlockedThemes.push('hidden');
+                addLog('✨ 히든 테마가 해금되었습니다!', true);
+                 updateThemeSelects(); 
+            }
+        }
     
     setTimeout(() => {
         announce.remove();
         openNextRound();
     }, 3000);
+
+      // ⭐ 물음표 보스 클리어 시 히든 테마 해금
+ 
+      
+        
 
     } else {
         const announce = document.createElement('div');
@@ -5133,6 +5432,7 @@ if (winner === '플레이어') {
 function openNextRound() {
     bossMode.round++;
     bossMode.rerollsLeft = 1;
+      bossMode.hiddenBossType = null; 
     
     // ⭐ 5의 배수 라운드 클리어 시 보상 선택
     if ((bossMode.round - 1) % 5 === 0 && bossMode.round > 1) {
@@ -5152,10 +5452,9 @@ function showRewardSelection() {
     const modal = document.getElementById('bossModeModal');
     modal.classList.add('active');
     
-    // innerHTML으로 전체를 교체하지 말고 기존 구조 유지
     const header = modal.querySelector('.unit-info-header h2');
     if (header) {
-        header.textContent = '🎁 특별 보상 선택';
+        header.textContent = '🎁 라운드 보상 선택';
     }
     
     document.getElementById('bossCardSelection').style.display = 'none';
@@ -5179,15 +5478,15 @@ function showRewardSelection() {
                     transition: transform 0.3s;
                 " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     <div style="font-size: 48px; margin-bottom: 15px;">🎴</div>
-                    <h3 style="color: #fff; margin-bottom: 10px;">유지 유닛 수 +1</h3>
+                    <h3 style="color: #fff; margin-bottom: 10px;">유닛 유지 +1</h3>
                     <p style="color: #ddd; font-size: 14px;">
                         다음 라운드부터<br>
-                        카드를 ${bossMode.selectCount}개 → ${bossMode.selectCount + 1}개 선택 가능<br>
+                        유닛을 ${bossMode.selectCount}개 → ${bossMode.selectCount + 1}개 유지<br>
                         (현재: ${bossMode.selectCount}개)
                     </p>
                 </div>
-                 
-                <div class="reward-card" onclick="selectReward('more')" style="
+                
+                <div class="reward-card" onclick="selectReward('team')" style="
                     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
                     border: 3px solid #ffd700;
                     border-radius: 15px;
@@ -5196,33 +5495,127 @@ function showRewardSelection() {
                     width: 250px;
                     transition: transform 0.3s;
                 " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                <div class="reward-card" onclick="selectReward('team')" style="...">
-    <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
-    <h3 style="color: #fff; margin-bottom: 10px;">팀 크기 +1</h3>
-    <p style="color: #ddd; font-size: 14px;">
-        최대 팀원을<br>
-        ${bossMode.teamSize}명 → ${bossMode.teamSize + 1}명으로 증가<br>
-        (현재: ${bossMode.teamSize}명)
-    </p>
-</div>
-        
+                    <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+                    <h3 style="color: #fff; margin-bottom: 10px;">팀 크기 +1</h3>
+                    <p style="color: #ddd; font-size: 14px;">
+                        최대 팀원을<br>
+                        ${bossMode.teamSize}명 → ${bossMode.teamSize + 1}명으로 증가<br>
+                        (현재: ${bossMode.teamSize}명)
+                    </p>
+                </div>
             </div>
         </div>
     `;
 }
 
 function selectReward(type) {
-  if (type === 'select') {
-    bossMode.selectCount++;
-    alert(`다음 라운드부터 교체 시 ${bossMode.selectCount}개의 유닛을 유지할 수 있습니다!`);
-         } else if (type === 'team') {
+    if (type === 'select') {
+        bossMode.selectCount++;
+        alert(`다음 라운드부터 교체 시 ${bossMode.selectCount}개의 유닛을 유지할 수 있습니다!`);
+    } else if (type === 'team') {
         bossMode.teamSize++;
         alert(`다음 라운드부터 팀 크기가 ${bossMode.teamSize}명으로 증가합니다!`);
     }
-    // ← type === 'more' 조건 제거 (카드 개수 증가 기능 삭제)
     
-    // 다음 라운드로
+    // ⭐ 5의 배수 라운드에 20% 확률로 히든 보스 선택 화면
+     if ((bossMode.round - 1) % 5 === 0 && Math.random() < 0.2) {
+        document.getElementById('bossModeModal').classList.remove('active');
+        setTimeout(() => {
+            showHiddenBossSelection();
+        }, 500);
+        return;
+    }
+    
+    // 다음 라운드로 (일반 진행)
     document.getElementById('bossModeModal').classList.remove('active');
+    setTimeout(() => {
+        document.getElementById('bossModeModal').classList.add('active');
+        document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
+        document.getElementById('bossCardSelection').style.display = 'block';
+        document.getElementById('bossRoundResult').style.display = 'none';
+        
+        if (type === 'team') {
+            const needed = bossMode.teamSize - bossMode.selectedUnits.length;
+            if (needed > 0) {
+                generateCards(3);
+                updateBossUI();
+            }
+        } else {
+            showReplaceMode();
+        }
+    }, 500);
+}
+
+function showHiddenBossSelection() {
+    const modal = document.getElementById('bossModeModal');
+    modal.classList.add('active');
+    
+    const header = modal.querySelector('.unit-info-header h2');
+    if (header) {
+        header.textContent = '🌟 특별 라운드! 보스 선택';
+    }
+    
+    document.getElementById('bossCardSelection').style.display = 'none';
+    document.getElementById('bossRoundResult').style.display = 'block';
+    
+    const resultDiv = document.getElementById('bossRoundResult');
+    resultDiv.innerHTML = `
+        <div style="padding: 30px; text-align: center;">
+            <p style="font-size: 18px; color: #ffd700; margin-bottom: 30px;">
+                🎊 20% 확률로 선택되었습니다! 보스를 고르세요
+            </p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <div class="reward-card" onclick="selectBossType('normal')" style="
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border: 3px solid #ff6b6b;
+                    border-radius: 15px;
+                    padding: 30px;
+                    cursor: pointer;
+                    width: 250px;
+                    transition: transform 0.3s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div style="font-size: 48px; margin-bottom: 15px;">💀</div>
+                    <h3 style="color: #fff; margin-bottom: 10px;">일반 보스</h3>
+                    <p style="color: #ddd; font-size: 14px;">
+                        강력한 공격으로 전투하는<br>
+                        전형적인 보스<br><br>
+                        <span style="color: #ffaa00;">HP: 750(+)?</span><br>
+                        <span style="color: #ff6b6b;">공격력: 120</span>
+                    </p>
+                </div>
+                
+                <div class="reward-card" onclick="selectBossType('hidden')" style="
+                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                    border: 3px solid #ffd700;
+                    border-radius: 15px;
+                    padding: 30px;
+                    cursor: pointer;
+                    width: 250px;
+                    transition: transform 0.3s;
+                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div style="font-size: 48px; margin-bottom: 15px;">❓</div>
+                    <h3 style="color: #fff; margin-bottom: 10px;">물음표 보스</h3>
+                    <p style="color: #ddd; font-size: 14px;">
+                        정체를 알 수 없는<br>
+                        신비로운 보스<br><br>
+                        <span style="color: #ffaa00;">HP: 1000</span><br>
+                        <span style="color: #ffd700;">5초마다 1개 유닛 소환</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function selectBossType(bossType) {
+    // 선택한 보스 타입 저장
+    bossMode.hiddenBossType = bossType === 'hidden' ? 'hiddenquestion' : 'boss';
+    
+    // 보스 선택 모달 닫기
+    document.getElementById('bossModeModal').classList.remove('active');
+    
+    // 약간의 딜레이 후 유닛 선택 화면 표시
     setTimeout(() => {
         document.getElementById('bossModeModal').classList.add('active');
         document.getElementById('bossModalTitle').textContent = `👑 보스전 - 라운드 ${bossMode.round}`;
@@ -5295,15 +5688,16 @@ function addExtraUnit(unitType) {
 
 
 // 교체 모드
+// showReplaceMode 함수 수정
 function showReplaceMode() {
     const container = document.getElementById('cardContainer');
-container.innerHTML = `<p style="text-align: center; font-size: 16px; color: #ffd700;">유지할 유닛 ${bossMode.selectCount}개를 선택하세요 (나머지는 제거됩니다)</p>`;    
+    container.innerHTML = `<p style="text-align: center; font-size: 16px; color: #ffd700;">유지할 유닛 ${bossMode.selectCount}개를 선택하세요 (나머지는 제거됩니다)</p>`;    
+    
     const listContainer = document.getElementById('selectedUnitsList');
     listContainer.innerHTML = '';
     
-    // ⭐ 수정: unitData로 받고 .type으로 접근
     bossMode.selectedUnits.forEach((unitData, index) => {
-        const unitInfo = unitDescriptions[unitData.type];  // ⭐ .type 추가
+        const unitInfo = unitDescriptions[unitData.type];
         const positionText = unitData.position === 'front' ? '전방' : '후방';
         
         const item = document.createElement('div');
@@ -5321,10 +5715,31 @@ container.innerHTML = `<p style="text-align: center; font-size: 16px; color: #ff
         listContainer.appendChild(item);
     });
     
+
+    
     const startBtn = document.getElementById('startBossBtn');
     if (startBtn) startBtn.style.display = 'none';
 }
 
+function completeSelection() {
+    const keptCount = bossMode.selectedUnits.filter(u => u.kept).length;
+    
+    if (keptCount !== bossMode.selectCount) {
+        alert(`정확히 ${bossMode.selectCount}개를 선택해주세요! (현재: ${keptCount}개)`);
+        return;
+    }
+    
+    // 선택된 유닛들만 남기기
+    bossMode.selectedUnits = bossMode.selectedUnits.filter(u => u.kept);
+    bossMode.selectedUnits.forEach(u => delete u.kept);
+    
+    // ⭐ 항상 3장만 생성
+    generateCards(3);
+    updateBossUI();
+    
+    const startBtn = document.getElementById('startBossBtn');
+    if (startBtn) startBtn.style.display = 'block';
+}
 // 유닛 교체
 function keepOneUnit(index) {
     const clickedUnit = bossMode.selectedUnits[index];
@@ -5356,20 +5771,12 @@ function keepOneUnit(index) {
             items[index].querySelector('div:last-child').textContent = '✓ 선택됨';
             items[index].querySelector('div:last-child').style.color = '#4CAF50';
         }
-    }
-    
-    // selectCount개 선택되면 카드 생성
-    const keptCount = bossMode.selectedUnits.filter(u => u.kept).length;
-    if (keptCount === bossMode.selectCount) {
-        // 선택된 유닛들만 남기기
-        bossMode.selectedUnits = bossMode.selectedUnits.filter(u => u.kept);
-        bossMode.selectedUnits.forEach(u => delete u.kept);
-        
-        generateCards(3);
-        updateBossUI();
-        
-        const startBtn = document.getElementById('startBossBtn');
-        if (startBtn) startBtn.style.display = 'block';
+        const newKeptCount = bossMode.selectedUnits.filter(u => u.kept).length;
+        if (newKeptCount === bossMode.selectCount) {
+            setTimeout(() => {
+                completeSelection();
+            }, 500);
+        }
     }
 }
 
